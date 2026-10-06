@@ -21,7 +21,7 @@ Nguồn: `de.rtf`, `huongdantrinhbay.rtf`, `phuongphap.rtf`, `motsoluuyloi.rtf`
 - **1.3.** Phát biểu bài toán
   - Input, Output của hệ thống là gì
   - Framework chung của hệ thống gồm các công đoạn chính nào (**chưa đi vào pp cụ thể**)
-- **1.4.** Đóng góp — Báo cáo được khảo sát nhằm đóng góp nội dung gì
+- **1.4.** Đóng góp, Báo cáo được khảo sát nhằm đóng góp nội dung gì
 
 ### Chương 2. Các công trình nghiên cứu liên quan
 - Chọn lọc các công trình liên quan đến chủ đề
@@ -51,9 +51,9 @@ Nguồn: `de.rtf`, `huongdantrinhbay.rtf`, `phuongphap.rtf`, `motsoluuyloi.rtf`
 |---|---|
 | 2.1 | Đọc kỹ tên đề tài |
 | 2.2 | Xác định các từ khóa (keyword) để tìm tài liệu |
-| 2.3 | Tích cực tìm kiếm tài liệu & đọc hiểu — ưu tiên hội nghị/tạp chí uy tín (CVPR, ICCV, IJCV...), luận văn Th.S, luận án TS. Dùng từ khóa *Survey / Overview / Literature Review / Comprehensive Study* + chủ đề. Hoặc "paper with codes" |
+| 2.3 | Tích cực tìm kiếm tài liệu & đọc hiểu, ưu tiên hội nghị/tạp chí uy tín (CVPR, ICCV, IJCV...), luận văn Th.S, luận án TS. Dùng từ khóa *Survey / Overview / Literature Review / Comprehensive Study* + chủ đề. Hoặc "paper with codes" |
 | 2.4 | **Phát biểu bài toán:** Input, Output là gì? Các tác vụ cần thực hiện là gì? Tập dữ liệu thử nghiệm (standard dataset) |
-| 2.5 | **Khảo sát tổng quan** — trả lời 2 câu hỏi: Người ta đã làm gì rồi? Đồ án muốn làm gì tiếp? |
+| 2.5 | **Khảo sát tổng quan:** trả lời 2 câu hỏi: Người ta đã làm gì rồi? Đồ án muốn làm gì tiếp? |
 | 2.6 | **Giải pháp:** chọn phương pháp tiên tiến đã công bố để trình bày lại. Trình tự theo mạch logic: **nguyên lý -> phương pháp -> giải thuật -> CT minh họa** |
 | 2.7 | **Cài đặt:** môi trường cài đặt (phần cứng, phần mềm); tập dữ liệu thử nghiệm; bảng kết quả thử nghiệm; đánh giá kết quả |
 | 2.8 | Viết báo cáo (Doc, Slide) |
@@ -65,7 +65,7 @@ Nguồn: `de.rtf`, `huongdantrinhbay.rtf`, `phuongphap.rtf`, `motsoluuyloi.rtf`
 
 > Đây là tài liệu quan trọng nhất. Thầy liệt kê chính xác những lỗi sẽ bị trừ điểm. Mỗi mục gồm *yêu cầu* và *lỗi thường gặp*.
 
-### Lưu ý 1 — Framework chung phải tổng quát
+### Lưu ý 1. Framework chung phải tổng quát
 
 **Yêu cầu:** Trong phát biểu bài toán, cần xác định framework chung cho hệ thống, gồm các công đoạn chính nào (chưa đi vào phương pháp cụ thể).
 
@@ -75,7 +75,7 @@ Nguồn: `de.rtf`, `huongdantrinhbay.rtf`, `phuongphap.rtf`, `motsoluuyloi.rtf`
 
 ---
 
-### Lưu ý 2 — Phải xác định ẩn số trong từng công đoạn
+### Lưu ý 2. Phải xác định ẩn số trong từng công đoạn
 
 **Yêu cầu:** Trong phát biểu bài toán, cần xác định được **các ẩn số phải tìm** trong các công đoạn.
 
@@ -85,7 +85,7 @@ Nguồn: `de.rtf`, `huongdantrinhbay.rtf`, `phuongphap.rtf`, `motsoluuyloi.rtf`
 
 ---
 
-### Lưu ý 3 — Related works so sánh theo CÙNG cột tiêu chí, ỨNG VỚI các công đoạn
+### Lưu ý 3. Related works so sánh theo CÙNG cột tiêu chí, ỨNG VỚI các công đoạn
 
 **Yêu cầu:** Trong related works, cần nêu được các giải pháp SOTA và so sánh chúng với **cùng các cột tiêu chí theo các công đoạn** đã nêu trong phát biểu bài toán.
 
@@ -97,17 +97,17 @@ Nguồn: `de.rtf`, `huongdantrinhbay.rtf`, `phuongphap.rtf`, `motsoluuyloi.rtf`
 
 ---
 
-### Lưu ý 4 — Giai đoạn học: ground truth, đánh nhãn, loss function
+### Lưu ý 4. Giai đoạn học: ground truth, đánh nhãn, loss function
 
 **Yêu cầu:** Trong giai đoạn học, cần nêu rõ **input, output xác thực (groundtruth)** là gì, **được đánh nhãn như thế nào**, và **loss function** là gì nhằm tối ưu các thông số của mạng.
 
 **Lỗi thường gặp:** Không đá động gì đến output xác thực, và được dùng như thế nào trong giai đoạn học.
 
--> Áp dụng: phải nói rõ với NeRF thì ground truth chính là **màu pixel của ảnh đã chụp** — tức dữ liệu **tự giám sát (self-supervised)**, không cần đánh nhãn thủ công. Đây là đặc điểm quan trọng phải nêu.
+-> Áp dụng: phải nói rõ với NeRF thì ground truth chính là **màu pixel của ảnh đã chụp:** tức dữ liệu **tự giám sát (self-supervised)**, không cần đánh nhãn thủ công. Đây là đặc điểm quan trọng phải nêu.
 
 ---
 
-### Lưu ý 5 — Trình bày rõ tiến trình giai đoạn học VÀ giai đoạn kiểm thử
+### Lưu ý 5. Trình bày rõ tiến trình giai đoạn học VÀ giai đoạn kiểm thử
 
 **Yêu cầu:** Trong giai đoạn học và giai đoạn kiểm thử, cần trình bày rõ **tiến trình hoạt động của hệ thống** để ra được kết quả mong muốn.
 
@@ -117,7 +117,7 @@ Nguồn: `de.rtf`, `huongdantrinhbay.rtf`, `phuongphap.rtf`, `motsoluuyloi.rtf`
 
 ---
 
-### Lưu ý 6 — Độ đo phải có CẢ độ chính xác LẪN độ phức tạp tính toán
+### Lưu ý 6. Độ đo phải có CẢ độ chính xác LẪN độ phức tạp tính toán
 
 **Yêu cầu:** Trong giai đoạn đánh giá hiệu suất (performance), cần xác định độ đo đánh giá về **độ chính xác** và **cả độ phức tạp tính toán**.
 
@@ -129,7 +129,7 @@ Nguồn: `de.rtf`, `huongdantrinhbay.rtf`, `phuongphap.rtf`, `motsoluuyloi.rtf`
 
 ---
 
-### Lưu ý 7 — Mô tả tập dữ liệu phải nêu được THÁCH THỨC
+### Lưu ý 7. Mô tả tập dữ liệu phải nêu được THÁCH THỨC
 
 **Yêu cầu:** Cần chú ý nhiều hơn trong mô tả **tập dữ liệu học**, **tập dữ liệu kiểm thử**: công tác đánh nhãn như thế nào, **số lượng mẫu**, **tính đa dạng của mẫu**, **tiêu chí xây dựng tập mẫu**.
 
@@ -141,7 +141,7 @@ Nguồn: `de.rtf`, `huongdantrinhbay.rtf`, `phuongphap.rtf`, `motsoluuyloi.rtf`
 
 ---
 
-### Lưu ý 8 — Related works phải chỉ ra khuyết điểm tồn đọng THEO CÔNG ĐOẠN
+### Lưu ý 8. Related works phải chỉ ra khuyết điểm tồn đọng THEO CÔNG ĐOẠN
 
 **Yêu cầu:** Trong related works, cần **nhìn ra các khuyết điểm còn tồn đọng cần giải quyết trong các công đoạn**.
 
@@ -157,16 +157,16 @@ Nguồn: `de.rtf`, `huongdantrinhbay.rtf`, `phuongphap.rtf`, `motsoluuyloi.rtf`
 
 Đối chiếu báo cáo với 8 lưu ý, đánh dấu khi đã đạt:
 
-- [ ] **Lưu ý 1** — Framework ở mục 1.3 chỉ nêu công đoạn tổng quát, không nhắc tên phương pháp cụ thể
-- [ ] **Lưu ý 2** — Mỗi công đoạn có nêu rõ: đã cho gì, ẩn số cần tìm là gì
-- [ ] **Lưu ý 3** — Bảng so sánh ở Chương 2 có cột ứng với các công đoạn; mọi phương pháp mô tả theo cùng một khuôn
-- [ ] **Lưu ý 4** — Có nêu rõ ground truth là gì, cách "đánh nhãn", loss function
-- [ ] **Lưu ý 5** — Có 2 sơ đồ riêng cho giai đoạn học và giai đoạn kiểm thử
-- [ ] **Lưu ý 6** — Có cả độ đo chính xác lẫn độ phức tạp tính toán; có phân tích quan hệ loss ↔ độ đo
-- [ ] **Lưu ý 7** — Mô tả dataset có nêu thách thức, số mẫu, tính đa dạng, tiêu chí xây dựng
-- [ ] **Lưu ý 8** — Cuối Chương 2 có bảng khuyết điểm tồn đọng theo từng công đoạn, phân loại độ chính xác / độ phức tạp
-- [ ] **phuongphap.rtf 2.6** — Chương 3 trình bày theo mạch: nguyên lý -> phương pháp -> giải thuật -> CT minh họa
-- [ ] **phuongphap.rtf 2.7** — Chương 4 có đủ: môi trường (phần cứng + phần mềm), dataset, bảng kết quả, đánh giá
-- [ ] **phuongphap.rtf 2.9** — Có bảng phân công theo mốc thời gian
-- [ ] **huongdantrinhbay** — Chương 4 có cả code tận dụng sẵn **và code tự viết**
-- [ ] **Phạm vi** — Không tuyên bố "đề xuất phương pháp mới" (thầy ghi rõ chưa yêu cầu)
+- [ ] **Lưu ý 1:** Framework ở mục 1.3 chỉ nêu công đoạn tổng quát, không nhắc tên phương pháp cụ thể
+- [ ] **Lưu ý 2:** Mỗi công đoạn có nêu rõ: đã cho gì, ẩn số cần tìm là gì
+- [ ] **Lưu ý 3:** Bảng so sánh ở Chương 2 có cột ứng với các công đoạn; mọi phương pháp mô tả theo cùng một khuôn
+- [ ] **Lưu ý 4:** Có nêu rõ ground truth là gì, cách "đánh nhãn", loss function
+- [ ] **Lưu ý 5:** Có 2 sơ đồ riêng cho giai đoạn học và giai đoạn kiểm thử
+- [ ] **Lưu ý 6:** Có cả độ đo chính xác lẫn độ phức tạp tính toán; có phân tích quan hệ loss ↔ độ đo
+- [ ] **Lưu ý 7:** Mô tả dataset có nêu thách thức, số mẫu, tính đa dạng, tiêu chí xây dựng
+- [ ] **Lưu ý 8:** Cuối Chương 2 có bảng khuyết điểm tồn đọng theo từng công đoạn, phân loại độ chính xác / độ phức tạp
+- [ ] **phuongphap.rtf 2.6:** Chương 3 trình bày theo mạch: nguyên lý -> phương pháp -> giải thuật -> CT minh họa
+- [ ] **phuongphap.rtf 2.7:** Chương 4 có đủ: môi trường (phần cứng + phần mềm), dataset, bảng kết quả, đánh giá
+- [ ] **phuongphap.rtf 2.9:** Có bảng phân công theo mốc thời gian
+- [ ] **huongdantrinhbay:** Chương 4 có cả code tận dụng sẵn **và code tự viết**
+- [ ] **Phạm vi:** Không tuyên bố "đề xuất phương pháp mới" (thầy ghi rõ chưa yêu cầu)

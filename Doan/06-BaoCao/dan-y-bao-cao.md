@@ -1,6 +1,6 @@
 # DÀN Ý CHI TIẾT BÁO CÁO ĐỒ ÁN
 
-**Đề tài:** Xây dựng ứng dụng kết xuất ảnh (rendering) với góc nhìn tùy ý dựa vào dãy ảnh 2D cho trước — Tìm hiểu mô hình NeRF và NeRF cải tiến
+**Đề tài:** Xây dựng ứng dụng kết xuất ảnh (rendering) với góc nhìn tùy ý dựa vào dãy ảnh 2D cho trước (Tìm hiểu mô hình NeRF và NeRF cải tiến)
 
 **Nhóm thực hiện:**
 
@@ -24,7 +24,7 @@ Dàn ý này được xây dựng bám sát `01-DeBai/yeu-cau-cua-thay.md`, đ�
 
 ### A.1. Trục tổ chức: bốn công đoạn
 
-Toàn bộ báo cáo xoay quanh bốn công đoạn được định nghĩa tại mục 1.3. Đây là yêu cầu cốt lõi của giảng viên, thể hiện ở các Lưu ý 1, 2, 3 và 8.
+Toàn bộ báo cáo xoay quanh bốn công đoạn được định nghĩa tại mục 1.3. Giảng viên nhấn mạnh yêu cầu này ở các Lưu ý 1, 2, 3 và 8.
 
 ```
 [CĐ1] Ước lượng      [CĐ2] Biểu diễn      [CĐ3] Kết xuất      [CĐ4] Tối ưu hóa
@@ -89,17 +89,15 @@ Giữ thống nhất các thuật ngữ sau trong toàn báo cáo:
 
 ### 1.1. Ý nghĩa khoa học của chủ đề `[Một phần]` (khoảng 1 trang)
 
-Mục này gồm bốn đoạn, mỗi đoạn một thông điệp.
+**Đoạn 1 (đặt vấn đề).** Con người chỉ cần nhìn một vật từ vài góc là hình dung được hình dạng ba chiều của nó, trong khi máy tính gặp khó khăn vì ảnh hai chiều đã mất thông tin độ sâu: mỗi điểm ảnh tương ứng với vô số điểm ba chiều khả dĩ. Bài toán tổng hợp góc nhìn mới (novel view synthesis) chính là khôi phục khả năng này cho máy tính.
 
-**Đoạn 1 — Đặt vấn đề.** Con người chỉ cần nhìn một vật từ vài góc là hình dung được hình dạng ba chiều của nó, trong khi máy tính gặp khó khăn vì ảnh hai chiều đã mất thông tin độ sâu: mỗi điểm ảnh tương ứng với vô số điểm ba chiều khả dĩ. Bài toán tổng hợp góc nhìn mới (novel view synthesis) chính là khôi phục khả năng này cho máy tính.
+**Đoạn 2 (quá trình phát triển trước NeRF).** Các hướng tiếp cận trước đó đều vướng một rào cản cơ bản: nội suy light field đòi hỏi ảnh lấy mẫu rất dày; biểu diễn lưới tam giác khó tối ưu và cần mô hình mẫu có sẵn; lưới voxel tiêu tốn bộ nhớ tăng theo lũy thừa của độ phân giải; biểu diễn bề mặt ẩn cần dữ liệu ba chiều xác thực làm đầu vào huấn luyện.
 
-**Đoạn 2 — Quá trình phát triển trước NeRF.** Các hướng tiếp cận trước đó đều vướng một rào cản cơ bản: nội suy light field đòi hỏi ảnh lấy mẫu rất dày; biểu diễn lưới tam giác khó tối ưu và cần mô hình mẫu có sẵn; lưới voxel tiêu tốn bộ nhớ tăng theo lũy thừa của độ phân giải; biểu diễn bề mặt ẩn cần dữ liệu ba chiều xác thực làm đầu vào huấn luyện.
+**Đoạn 3 (vì sao NeRF là bước ngoặt).** NeRF khắc phục đồng thời ba hạn chế trên: chuyển từ biểu diễn tường minh sang biểu diễn ẩn nên nén được toàn cảnh vào vài megabyte trọng số; chỉ cần ảnh màu thông thường mà không cần dữ liệu ba chiều xác thực; và lần đầu đạt chất lượng ảnh gần với ảnh chụp thật.
 
-**Đoạn 3 — Vì sao NeRF là bước ngoặt.** NeRF khắc phục đồng thời ba hạn chế trên: chuyển từ biểu diễn tường minh sang biểu diễn ẩn nên nén được toàn cảnh vào vài megabyte trọng số; chỉ cần ảnh màu thông thường mà không cần dữ liệu ba chiều xác thực; và lần đầu đạt chất lượng ảnh gần với ảnh chụp thật.
+**Đoạn 4 (vị trí trong bức tranh nghiên cứu hiện nay).** NeRF mở ra nhánh nghiên cứu neural rendering với số lượng công trình kế thừa tăng nhanh từ năm 2020, dẫn tới sự xuất hiện của 3D Gaussian Splatting năm 2023.
 
-**Đoạn 4 — Vị trí trong bức tranh nghiên cứu hiện nay.** NeRF mở ra nhánh nghiên cứu neural rendering với số lượng công trình kế thừa tăng nhanh từ năm 2020, dẫn tới sự xuất hiện của 3D Gaussian Splatting năm 2023.
-
-*Hình 1.1:* minh họa bài toán — một số ảnh đầu vào ở các góc khác nhau, dẫn tới ảnh đầu ra ở góc chưa từng chụp.
+*Hình 1.1:* minh họa bài toán: một số ảnh đầu vào ở các góc khác nhau, dẫn tới ảnh đầu ra ở góc chưa từng chụp.
 
 *Nguồn trích dẫn:* `Survey/2022 Advances in Neural Rendering`, `Survey/2022 CVM Review`, `Selected/2020 NeRF`.
 
@@ -120,7 +118,7 @@ Nên nêu một đến hai ví dụ triển khai thực tế, chẳng hạn tín
 
 ### 1.3. Phát biểu bài toán `[Sẵn sàng]` (khoảng 3,5 trang)
 
-Đây là mục quan trọng nhất của Chương 1 vì nó định nghĩa trục tổ chức cho toàn bộ báo cáo.
+Mục này định nghĩa trục tổ chức cho toàn bộ báo cáo.
 
 **Lưu ý 1:** framework chỉ mô tả công đoạn ở mức tổng quát, không được nhắc tên phương pháp cụ thể như COLMAP hay MLP.
 **Lưu ý 2:** mỗi công đoạn phải nêu rõ dữ kiện đã cho và ẩn số cần tìm.
@@ -181,7 +179,7 @@ Cụ thể hóa bốn công đoạn thành danh sách tác vụ thực thi đư�
 
 #### 1.3.5. Tập dữ liệu thử nghiệm chuẩn
 
-**Lưu ý 7:** không chỉ nêu số lượng mà phải nêu rõ dữ liệu chứa thách thức gì.
+**Lưu ý 7:** ngoài số lượng mẫu, phải nêu rõ dữ liệu chứa thách thức gì.
 
 **Bảng 1.3. Các bộ dữ liệu chuẩn của bài toán**
 
@@ -255,7 +253,7 @@ Mỗi hạn chế được gắn với công đoạn tương ứng và phân lo�
 
 ### 2.3. Các giải pháp tiên tiến `[Sẵn sàng]` (khoảng 4 trang)
 
-**Lưu ý 3:** mỗi phương pháp trình bày theo cùng một khuôn năm mục — khuyết điểm được giải quyết, công đoạn tác động, ý tưởng cốt lõi, kết quả đạt được, hạn chế còn lại. Mỗi phương pháp viết khoảng nửa trang.
+**Lưu ý 3:** mỗi phương pháp trình bày theo cùng một khuôn năm mục gồm khuyết điểm được giải quyết, công đoạn tác động, ý tưởng chính, kết quả đạt được, hạn chế còn lại. Mỗi phương pháp viết khoảng nửa trang.
 
 **Bảng 2.4. Tám phương pháp tiên tiến và phạm vi tác động**
 
@@ -337,7 +335,7 @@ Chương này là trọng tâm của báo cáo, trình bày theo mạch logic m�
 - **3.1.2.** Mô hình camera lỗ kim và phép chiếu phối cảnh dựa trên tam giác đồng dạng. Ma trận nội tại `K`, ma trận xoay `R`, tâm camera `C`, công thức tia `r(t) = o + t*d`. Kèm Hình 3.1.
 - **3.1.3.** Lấy mẫu phân tầng và lý do không dùng lưới điểm cố định.
 - **3.1.4.** Positional encoding, hiện tượng thiên lệch phổ (spectral bias), và hai giá trị L bằng 10 cho vị trí tạo 60 chiều, L bằng 4 cho hướng tạo 24 chiều.
-- **3.1.5.** Kiến trúc MLP 8 lớp 256 kênh và kết nối tắt. Điểm thiết kế then chốt: density chỉ phụ thuộc vị trí trong khi màu phụ thuộc cả hướng nhìn, nhờ đó vừa đảm bảo nhất quán đa góc nhìn vừa mô phỏng được hiệu ứng phụ thuộc góc nhìn. Kèm Hình 3.2.
+- **3.1.5.** Kiến trúc MLP 8 lớp 256 kênh và kết nối tắt. Density chỉ phụ thuộc vị trí trong khi màu phụ thuộc cả hướng nhìn, nhờ đó vừa đảm bảo nhất quán đa góc nhìn vừa mô phỏng được hiệu ứng phụ thuộc góc nhìn. Kèm Hình 3.2.
 - **3.1.6.** Volume rendering. Định nghĩa chính xác density là xác suất vi phân, công thức tích phân liên tục, cách dẫn hàm transmittance từ phương trình vi phân theo định luật Beer-Lambert, và chứng minh công thức rời rạc là tổng Riemann xấp xỉ tích phân. Kèm Bảng 3.3 và một ví dụ số với ba điểm mẫu minh họa hiện tượng che khuất.
 - **3.1.7.** Lấy mẫu phân cấp với trọng số, phương pháp inverse transform sampling, và hàm mất mát cộng gộp cả hai nhánh.
 
@@ -356,7 +354,7 @@ Chương này là trọng tâm của báo cáo, trình bày theo mạch logic m�
 
 #### 3.3.1. Giải quyết Parameterization bằng Scene Contraction (khoảng 1,75 trang)
 
-Tác động vào CĐ2 và CĐ3. Nội dung gồm: công thức phép co không gian, lưu ý bán kính được đo từ gốc tọa độ thế giới chứ không phải từ camera; đóng góp cốt lõi là áp phép co lên cả phân phối Gaussian theo kiểu bộ lọc Kalman mở rộng chứ không chỉ lên điểm; cách tham số hóa lại tia để lấy mẫu đều theo disparity, nhờ đó cận xa vô hạn trở nên hợp lệ; và off-axis IPE là nâng cấp bắt buộc vì phép co sinh ra Gaussian rất dị hướng. Kèm Hình 3.4 và Bảng 3.5.
+Tác động vào CĐ2 và CĐ3. Nội dung gồm: công thức phép co không gian, lưu ý bán kính được đo từ gốc tọa độ thế giới chứ không phải từ camera; đóng góp chính là áp phép co lên cả phân phối Gaussian theo kiểu bộ lọc Kalman mở rộng chứ không chỉ lên điểm; cách tham số hóa lại tia để lấy mẫu đều theo disparity, nhờ đó cận xa vô hạn trở nên hợp lệ; và off-axis IPE là nâng cấp bắt buộc vì phép co sinh ra Gaussian rất dị hướng. Kèm Hình 3.4 và Bảng 3.5.
 
 #### 3.3.2. Giải quyết Efficiency bằng Proposal Network (khoảng 1,75 trang)
 
@@ -538,7 +536,7 @@ Bước này ứng với CĐ1. Quy trình gồm trích đặc trưng, khớp đ�
 
 ### 4.4. Độ đo đánh giá (khoảng 1,5 trang)
 
-Đây là mục giảng viên nhấn mạnh tại Lưu ý 6.
+Giảng viên nhấn mạnh mục này tại Lưu ý 6.
 
 #### 4.4.1. Nhóm độ đo độ chính xác
 
@@ -589,7 +587,7 @@ Ba hệ quả cần nêu. Thứ nhất, vì chỉ bình phương trung bình đ�
 | TN3 | So sánh với phương pháp đối chứng | Cùng dữ liệu TN2 | nerfacto so với instant-ngp |
 | TN4 | Nghiên cứu loại trừ | Cùng dữ liệu TN2 | Bật và tắt distortion loss, thay đổi số mẫu proposal |
 
-Kịch bản TN4 có giá trị cao vì mọi công trình hàng đầu đều có nghiên cứu loại trừ. Chỉ cần thực hiện một đến hai cấu hình là đủ chứng minh nhóm hiểu cơ chế chứ không chỉ chạy lệnh có sẵn.
+Mọi công trình hàng đầu đều có nghiên cứu loại trừ, nên TN4 đáng làm. Chỉ cần thực hiện một đến hai cấu hình là đủ chứng minh nhóm hiểu cơ chế chứ không chỉ chạy lệnh có sẵn.
 
 ### 4.6. Kết quả (khoảng 3 trang)
 
