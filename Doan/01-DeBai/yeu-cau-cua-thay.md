@@ -54,16 +54,16 @@ Nguồn: `de.rtf`, `huongdantrinhbay.rtf`, `phuongphap.rtf`, `motsoluuyloi.rtf`
 | 2.3 | Tích cực tìm kiếm tài liệu & đọc hiểu — ưu tiên hội nghị/tạp chí uy tín (CVPR, ICCV, IJCV...), luận văn Th.S, luận án TS. Dùng từ khóa *Survey / Overview / Literature Review / Comprehensive Study* + chủ đề. Hoặc "paper with codes" |
 | 2.4 | **Phát biểu bài toán:** Input, Output là gì? Các tác vụ cần thực hiện là gì? Tập dữ liệu thử nghiệm (standard dataset) |
 | 2.5 | **Khảo sát tổng quan** — trả lời 2 câu hỏi: Người ta đã làm gì rồi? Đồ án muốn làm gì tiếp? |
-| 2.6 | **Giải pháp:** chọn phương pháp tiên tiến đã công bố để trình bày lại. Trình tự theo mạch logic: **nguyên lý → phương pháp → giải thuật → CT minh họa** |
+| 2.6 | **Giải pháp:** chọn phương pháp tiên tiến đã công bố để trình bày lại. Trình tự theo mạch logic: **nguyên lý -> phương pháp -> giải thuật -> CT minh họa** |
 | 2.7 | **Cài đặt:** môi trường cài đặt (phần cứng, phần mềm); tập dữ liệu thử nghiệm; bảng kết quả thử nghiệm; đánh giá kết quả |
 | 2.8 | Viết báo cáo (Doc, Slide) |
 | 2.9 | **Phân công:** lập bảng phân công công việc cho từng thành viên với các cột mốc thời gian cụ thể |
 
 ---
 
-## 4. ⚠️ TÁM LỖI THƯỜNG GẶP CẦN TRÁNH (`motsoluuyloi.rtf`)
+## 4. TÁM LỖI THƯỜNG GẶP CẦN TRÁNH (`motsoluuyloi.rtf`)
 
-> **Đây là tài liệu quan trọng nhất.** Thầy liệt kê chính xác những lỗi sẽ bị trừ điểm. Mỗi mục gồm *yêu cầu* và *lỗi thường gặp*.
+> Đây là tài liệu quan trọng nhất. Thầy liệt kê chính xác những lỗi sẽ bị trừ điểm. Mỗi mục gồm *yêu cầu* và *lỗi thường gặp*.
 
 ### Lưu ý 1 — Framework chung phải tổng quát
 
@@ -71,7 +71,7 @@ Nguồn: `de.rtf`, `huongdantrinhbay.rtf`, `phuongphap.rtf`, `motsoluuyloi.rtf`
 
 **Lỗi thường gặp:** Xác định luôn phương pháp cụ thể trong framework. Làm như vậy sẽ không thấy được nhiều giải pháp có thể có trong các công đoạn, hạn chế sự sáng tạo.
 
-→ *Áp dụng:* framework chỉ nêu "ước lượng tham số camera", KHÔNG được viết "dùng COLMAP". Chỉ nêu "biểu diễn cảnh", KHÔNG viết "dùng MLP".
+-> Áp dụng: framework chỉ nêu "ước lượng tham số camera", KHÔNG được viết "dùng COLMAP". Chỉ nêu "biểu diễn cảnh", KHÔNG viết "dùng MLP".
 
 ---
 
@@ -81,7 +81,7 @@ Nguồn: `de.rtf`, `huongdantrinhbay.rtf`, `phuongphap.rtf`, `motsoluuyloi.rtf`
 
 **Lỗi thường gặp:** Không xác định được các ẩn số phải tìm trong các công đoạn. Làm như vậy sẽ không hiểu được các giải pháp đã được công bố.
 
-→ *Áp dụng:* mỗi công đoạn phải nêu rõ: **biết gì (đã cho)** và **cần tìm gì (ẩn số)**.
+-> Áp dụng: mỗi công đoạn phải nêu rõ: **biết gì (đã cho)** và **cần tìm gì (ẩn số)**.
 
 ---
 
@@ -90,10 +90,10 @@ Nguồn: `de.rtf`, `huongdantrinhbay.rtf`, `phuongphap.rtf`, `motsoluuyloi.rtf`
 **Yêu cầu:** Trong related works, cần nêu được các giải pháp SOTA và so sánh chúng với **cùng các cột tiêu chí theo các công đoạn** đã nêu trong phát biểu bài toán.
 
 **Lỗi thường gặp:**
-- Mỗi giải pháp được trình bày với dàn bài khác nhau → rất khó so sánh giải pháp này với giải pháp khác
-- Không trình bày các giải pháp ứng với các công đoạn ở mục phát biểu bài toán → khó nhận biết các giải pháp đã đóng góp thế nào trong các công đoạn
+- Mỗi giải pháp được trình bày với dàn bài khác nhau -> rất khó so sánh giải pháp này với giải pháp khác
+- Không trình bày các giải pháp ứng với các công đoạn ở mục phát biểu bài toán -> khó nhận biết các giải pháp đã đóng góp thế nào trong các công đoạn
 
-→ *Áp dụng:* bảng so sánh phải có **cột = công đoạn**, hàng = phương pháp. Mỗi phương pháp mô tả theo **cùng một khuôn** bám theo công đoạn.
+-> Áp dụng: bảng so sánh phải có **cột = công đoạn**, hàng = phương pháp. Mỗi phương pháp mô tả theo **cùng một khuôn** bám theo công đoạn.
 
 ---
 
@@ -103,7 +103,7 @@ Nguồn: `de.rtf`, `huongdantrinhbay.rtf`, `phuongphap.rtf`, `motsoluuyloi.rtf`
 
 **Lỗi thường gặp:** Không đá động gì đến output xác thực, và được dùng như thế nào trong giai đoạn học.
 
-→ *Áp dụng:* phải nói rõ với NeRF thì ground truth chính là **màu pixel của ảnh đã chụp** — tức dữ liệu **tự giám sát (self-supervised)**, không cần đánh nhãn thủ công. Đây là đặc điểm quan trọng phải nêu.
+-> Áp dụng: phải nói rõ với NeRF thì ground truth chính là **màu pixel của ảnh đã chụp** — tức dữ liệu **tự giám sát (self-supervised)**, không cần đánh nhãn thủ công. Đây là đặc điểm quan trọng phải nêu.
 
 ---
 
@@ -113,7 +113,7 @@ Nguồn: `de.rtf`, `huongdantrinhbay.rtf`, `phuongphap.rtf`, `motsoluuyloi.rtf`
 
 **Lỗi thường gặp:** Không cho thấy được hệ thống hoạt động như thế nào để ra được kết quả.
 
-→ *Áp dụng:* tách rõ **2 sơ đồ**: sơ đồ giai đoạn học (có backpropagation, có ground truth) và sơ đồ giai đoạn kiểm thử (chỉ forward, không có ground truth).
+-> Áp dụng: tách rõ **2 sơ đồ**: sơ đồ giai đoạn học (có backpropagation, có ground truth) và sơ đồ giai đoạn kiểm thử (chỉ forward, không có ground truth).
 
 ---
 
@@ -123,9 +123,9 @@ Nguồn: `de.rtf`, `huongdantrinhbay.rtf`, `phuongphap.rtf`, `motsoluuyloi.rtf`
 
 **Lỗi thường gặp:**
 - Không hiểu về độ đo đánh giá, độ phức tạp tính toán
-- **Không hiểu loss function có liên quan gì đến độ đo đánh giá** → có thể dẫn đến tình trạng **"học một đằng, đánh giá một nẻo"**
+- **Không hiểu loss function có liên quan gì đến độ đo đánh giá** -> có thể dẫn đến tình trạng **"học một đằng, đánh giá một nẻo"**
 
-→ *Áp dụng:* phải phân tích mối liên hệ giữa loss (MSE) và độ đo (PSNR có quan hệ trực tiếp với MSE; SSIM/LPIPS thì KHÔNG được tối ưu trực tiếp). Phải nêu độ phức tạp tính toán: số phép truy vấn mạng/tia, thời gian train, thời gian render, bộ nhớ.
+-> Áp dụng: phải phân tích mối liên hệ giữa loss (MSE) và độ đo (PSNR có quan hệ trực tiếp với MSE; SSIM/LPIPS thì KHÔNG được tối ưu trực tiếp). Phải nêu độ phức tạp tính toán: số phép truy vấn mạng/tia, thời gian train, thời gian render, bộ nhớ.
 
 ---
 
@@ -137,7 +137,7 @@ Nguồn: `de.rtf`, `huongdantrinhbay.rtf`, `phuongphap.rtf`, `motsoluuyloi.rtf`
 - Không cho thấy tập dữ liệu chứa các **thách thức** gì. Nếu tập dữ liệu không chứa các thách thức của bài toán thì **dù hệ thống đạt performance rất cao cũng không thể khẳng định đây là giải pháp tốt**
 - Không hiểu được cách đánh nhãn dữ liệu như thế nào
 
-→ *Áp dụng:* với mỗi dataset phải nêu rõ nó chứa thách thức gì (cảnh unbounded, vật thể mảnh, bề mặt phản chiếu, ánh sáng thay đổi, vùng ít ảnh quan sát...).
+-> Áp dụng: với mỗi dataset phải nêu rõ nó chứa thách thức gì (cảnh unbounded, vật thể mảnh, bề mặt phản chiếu, ánh sáng thay đổi, vùng ít ảnh quan sát...).
 
 ---
 
@@ -149,7 +149,7 @@ Nguồn: `de.rtf`, `huongdantrinhbay.rtf`, `phuongphap.rtf`, `motsoluuyloi.rtf`
 - Chưa nhìn ra được cần cải tiến nội dung gì trong các công đoạn
 - Cần cải tiến **độ chính xác** hay **độ phức tạp tính toán**
 
-→ *Áp dụng:* cuối Chương 2 phải có bảng: mỗi công đoạn còn khuyết điểm gì, thuộc loại *độ chính xác* hay *độ phức tạp tính toán*, và phương pháp nào đang giải quyết tới đâu.
+-> Áp dụng: cuối Chương 2 phải có bảng: mỗi công đoạn còn khuyết điểm gì, thuộc loại *độ chính xác* hay *độ phức tạp tính toán*, và phương pháp nào đang giải quyết tới đâu.
 
 ---
 
@@ -157,15 +157,15 @@ Nguồn: `de.rtf`, `huongdantrinhbay.rtf`, `phuongphap.rtf`, `motsoluuyloi.rtf`
 
 Đối chiếu báo cáo với 8 lưu ý, đánh dấu khi đã đạt:
 
-- [ ] **LƯU Ý 1** — Framework ở mục 1.3 chỉ nêu công đoạn tổng quát, không nhắc tên phương pháp cụ thể
-- [ ] **LƯU Ý 2** — Mỗi công đoạn có nêu rõ: đã cho gì, ẩn số cần tìm là gì
-- [ ] **LƯU Ý 3** — Bảng so sánh ở Chương 2 có cột ứng với các công đoạn; mọi phương pháp mô tả theo cùng một khuôn
-- [ ] **LƯU Ý 4** — Có nêu rõ ground truth là gì, cách "đánh nhãn", loss function
-- [ ] **LƯU Ý 5** — Có 2 sơ đồ riêng cho giai đoạn học và giai đoạn kiểm thử
-- [ ] **LƯU Ý 6** — Có cả độ đo chính xác lẫn độ phức tạp tính toán; có phân tích quan hệ loss ↔ độ đo
-- [ ] **LƯU Ý 7** — Mô tả dataset có nêu thách thức, số mẫu, tính đa dạng, tiêu chí xây dựng
-- [ ] **LƯU Ý 8** — Cuối Chương 2 có bảng khuyết điểm tồn đọng theo từng công đoạn, phân loại độ chính xác / độ phức tạp
-- [ ] **phuongphap.rtf 2.6** — Chương 3 trình bày theo mạch: nguyên lý → phương pháp → giải thuật → CT minh họa
+- [ ] **Lưu ý 1** — Framework ở mục 1.3 chỉ nêu công đoạn tổng quát, không nhắc tên phương pháp cụ thể
+- [ ] **Lưu ý 2** — Mỗi công đoạn có nêu rõ: đã cho gì, ẩn số cần tìm là gì
+- [ ] **Lưu ý 3** — Bảng so sánh ở Chương 2 có cột ứng với các công đoạn; mọi phương pháp mô tả theo cùng một khuôn
+- [ ] **Lưu ý 4** — Có nêu rõ ground truth là gì, cách "đánh nhãn", loss function
+- [ ] **Lưu ý 5** — Có 2 sơ đồ riêng cho giai đoạn học và giai đoạn kiểm thử
+- [ ] **Lưu ý 6** — Có cả độ đo chính xác lẫn độ phức tạp tính toán; có phân tích quan hệ loss ↔ độ đo
+- [ ] **Lưu ý 7** — Mô tả dataset có nêu thách thức, số mẫu, tính đa dạng, tiêu chí xây dựng
+- [ ] **Lưu ý 8** — Cuối Chương 2 có bảng khuyết điểm tồn đọng theo từng công đoạn, phân loại độ chính xác / độ phức tạp
+- [ ] **phuongphap.rtf 2.6** — Chương 3 trình bày theo mạch: nguyên lý -> phương pháp -> giải thuật -> CT minh họa
 - [ ] **phuongphap.rtf 2.7** — Chương 4 có đủ: môi trường (phần cứng + phần mềm), dataset, bảng kết quả, đánh giá
 - [ ] **phuongphap.rtf 2.9** — Có bảng phân công theo mốc thời gian
 - [ ] **huongdantrinhbay** — Chương 4 có cả code tận dụng sẵn **và code tự viết**

@@ -2,109 +2,136 @@
 
 **Đề tài:** Xây dựng ứng dụng kết xuất ảnh (rendering) với góc nhìn tùy ý dựa vào dãy ảnh 2D cho trước — Tìm hiểu mô hình NeRF và NeRF cải tiến
 
-**Nhóm:** 2 thành viên — Bùi Văn Thiên (24120138) và [tên thành viên 2]
-**Lớp:** Đồ Họa Máy Tính CQ2024/23 · **GVHD:** PGS.TS Lý Quốc Ngọc
-**Phương pháp chọn trình bày:** Mip-NeRF 360 (Barron et al., CVPR 2022)
+**Nhóm thực hiện:**
+
+| Thành viên | MSSV |
+|---|---|
+| Bùi Văn Thiên | 24120138 |
+| Nguyễn Minh Khoa | 24120073 |
+
+**Lớp:** Đồ Họa Máy Tính CQ2024/23
+**Giảng viên hướng dẫn:** PGS.TS Lý Quốc Ngọc
+**Phương pháp chọn trình bày:** Mip-NeRF 360 (Barron và cộng sự, CVPR 2022)
 **Độ dài dự kiến:** 40-48 trang
 
-> **Dàn ý này được xây dựng bám sát `01-DeBai/yeu-cau-cua-thay.md`** — đặc biệt là **8 lỗi thường gặp** trong `motsoluuyloi.rtf`. Mỗi chỗ liên quan đều có ghi chú `⚠️ LƯU Ý n` để đối chiếu.
+Dàn ý này được xây dựng bám sát `01-DeBai/yeu-cau-cua-thay.md`, đặc biệt là tám lỗi thường gặp nêu trong `motsoluuyloi.rtf`. Mỗi vị trí có liên quan đều ghi chú "Lưu ý n" để tiện đối chiếu.
+
+**Quy ước trạng thái nguyên liệu:** `[Sẵn sàng]` viết được ngay · `[Một phần]` có nguyên liệu nhưng chưa đủ · `[Chưa có]` phải làm từ đầu.
 
 ---
 
-## NGUYÊN TẮC XUYÊN SUỐT
+## PHẦN A. NGUYÊN TẮC XUYÊN SUỐT
 
-### A. Trục tổ chức: "CÁC CÔNG ĐOẠN"
+### A.1. Trục tổ chức: bốn công đoạn
 
-Đây là yêu cầu cốt lõi của thầy (Lưu ý 1, 2, 3, 8). Toàn bộ báo cáo xoay quanh **4 công đoạn** được định nghĩa ở mục 1.3:
+Toàn bộ báo cáo xoay quanh bốn công đoạn được định nghĩa tại mục 1.3. Đây là yêu cầu cốt lõi của giảng viên, thể hiện ở các Lưu ý 1, 2, 3 và 8.
 
 ```
-[CĐ1] Ước lượng    [CĐ2] Biểu diễn    [CĐ3] Kết xuất    [CĐ4] Tối ưu hóa
-      tham số camera       cảnh 3D            ảnh              biểu diễn
+[CĐ1] Ước lượng      [CĐ2] Biểu diễn      [CĐ3] Kết xuất      [CĐ4] Tối ưu hóa
+      tham số camera         cảnh 3D              ảnh                biểu diễn
 ```
 
-- **Chương 1** định nghĩa 4 công đoạn + ẩn số của từng công đoạn (Lưu ý 1, 2)
-- **Chương 2** so sánh các phương pháp **theo đúng 4 công đoạn đó** (Lưu ý 3), và chỉ ra **khuyết điểm tồn đọng theo từng công đoạn** (Lưu ý 8)
-- **Chương 3** trình bày Mip-NeRF 360 **theo đúng 4 công đoạn đó**
-- **Chương 4** đánh giá kết quả gắn với từng công đoạn
+Bốn công đoạn này giữ vai trò khác nhau ở từng chương:
 
-→ Nhờ vậy người đọc luôn đối chiếu được: công đoạn này phương pháp A làm thế nào, phương pháp B làm thế nào.
+| Chương | Vai trò của bốn công đoạn |
+|---|---|
+| 1 | Định nghĩa bốn công đoạn và ẩn số cần tìm trong mỗi công đoạn |
+| 2 | So sánh các phương pháp theo đúng bốn công đoạn; chỉ ra khuyết điểm tồn đọng ở từng công đoạn |
+| 3 | Trình bày Mip-NeRF 360 theo đúng bốn công đoạn |
+| 4 | Đánh giá kết quả thực nghiệm gắn với từng công đoạn |
 
-### B. Sáu nguyên tắc trình bày học từ paper top đầu
+Cách tổ chức này cho phép người đọc đối chiếu trực tiếp: cùng một công đoạn, phương pháp A làm thế nào và phương pháp B làm thế nào.
 
-1. **Nêu vấn đề trước, giải pháp sau.** Mip-NeRF 360 tuyên bố **ba vấn đề** (Parameterization, Efficiency, Ambiguity) rồi dành mỗi mục giải một vấn đề.
-2. **Có mục "Preliminaries"** tóm tắt phương pháp nền trước khi nói mình thay đổi gì.
-3. **Mỗi công thức có bảng ký hiệu** định nghĩa ngay lần đầu xuất hiện.
-4. **Kết quả có cả định lượng và định tính.** Bảng số chứng minh "tốt hơn bao nhiêu"; ảnh cạnh nhau chứng minh "tốt hơn ở chỗ nào".
-5. **Phải có Ablation Study** — tắt từng thành phần rồi đo lại.
-6. **Trung thực về hạn chế.** Mọi paper top đầu đều có mục Limitations.
+### A.2. Sáu nguyên tắc trình bày rút từ các công trình hàng đầu
 
-**Chú thích trạng thái nguyên liệu:** 🟢 viết được ngay · 🟡 có một phần · 🔴 chưa có gì
+Sáu nguyên tắc dưới đây rút ra từ cách NeRF (ECCV 2020), Mip-NeRF 360 (CVPR 2022) và Instant-NGP (SIGGRAPH 2022) tổ chức nội dung.
+
+1. **Nêu vấn đề trước, trình bày giải pháp sau.** Mip-NeRF 360 tuyên bố ba vấn đề cần giải quyết (Parameterization, Efficiency, Ambiguity) rồi dành mỗi mục cho một vấn đề.
+2. **Có mục kiến thức nền (Preliminaries).** Tóm tắt phương pháp nền trước khi trình bày phần cải tiến, để người đọc phân biệt được đâu là đóng góp mới.
+3. **Mỗi công thức kèm bảng ký hiệu.** Định nghĩa mọi ký hiệu ngay lần đầu xuất hiện.
+4. **Kết quả gồm cả định lượng và định tính.** Bảng số chứng minh mức độ cải thiện; ảnh đặt cạnh nhau chứng minh cải thiện ở đâu.
+5. **Có nghiên cứu loại trừ (Ablation Study).** Tắt từng thành phần rồi đo lại để chứng minh thành phần đó thực sự cần thiết.
+6. **Trung thực về hạn chế.** Mọi công trình hàng đầu đều có mục Limitations.
+
+### A.3. Quy ước thuật ngữ
+
+Giữ thống nhất các thuật ngữ sau trong toàn báo cáo:
+
+| Thuật ngữ | Định nghĩa dùng trong báo cáo |
+|---|---|
+| Công đoạn | Một trong bốn giai đoạn của framework tổng quát ở mục 1.3.2 |
+| Ẩn số | Đại lượng chưa biết cần tìm trong một công đoạn |
+| Độ chính xác | Nhóm độ đo phản ánh chất lượng ảnh (PSNR, SSIM, LPIPS) |
+| Độ phức tạp tính toán | Nhóm độ đo phản ánh chi phí (thời gian, bộ nhớ, số truy vấn mạng) |
+| Giai đoạn học | Quá trình tối ưu tham số, có lan truyền ngược |
+| Giai đoạn kiểm thử | Quá trình sinh ảnh từ tham số đã học, không lan truyền ngược |
+| Biểu diễn ẩn | Thông tin cảnh nằm trong tham số của một hàm, không lưu tường minh |
+| Biểu diễn tường minh | Thông tin cảnh lưu trực tiếp dưới dạng điểm, mặt, ô lưới |
 
 ---
 
-# PHẦN MỞ ĐẦU (~4 trang)
+## PHẦN MỞ ĐẦU (khoảng 4 trang)
 
 | Thành phần | Nội dung |
 |---|---|
-| Trang bìa | Trường/khoa, tên đồ án, môn học, nhóm, GVHD, năm |
-| Lời cảm ơn | ~0,5 trang |
-| Mục lục | Tự động, tới mục cấp 3 |
-| Danh mục hình, bảng | Đánh số theo chương (Hình 3.1, Bảng 2.1...) |
-| **Danh mục từ viết tắt** | NeRF, MLP, SfM, COLMAP, PSNR, SSIM, LPIPS, IPE, PE, NDC, SH, 3DGS, GPU, TPU, CUDA, SDF, FPS |
-| **Danh mục ký hiệu** | `x`(vị trí 3D), `d`(hướng nhìn), `o`(gốc tia), `t`(tham số tia), `σ`(density), `c`(màu), `T`(transmittance), `α`(opacity), `γ(·)`(positional encoding), `μ,Σ`(mean/covariance Gaussian), `Θ`(trọng số mạng), `K,R,C`(nội tại/xoay/tâm camera) |
+| Trang bìa | Trường, khoa, tên đồ án, môn học, nhóm, giảng viên hướng dẫn, năm |
+| Lời cảm ơn | Khoảng nửa trang |
+| Mục lục | Tự động sinh, tới mục cấp ba |
+| Danh mục hình, danh mục bảng | Đánh số theo chương, ví dụ Hình 3.1, Bảng 2.1 |
+| Danh mục từ viết tắt | NeRF, MLP, SfM, COLMAP, PSNR, SSIM, LPIPS, IPE, PE, NDC, SH, 3DGS, GPU, TPU, CUDA, SDF, FPS |
+| Danh mục ký hiệu | x (vị trí 3D), d (hướng nhìn), o (gốc tia), t (tham số tia), sigma (density), c (màu), T (transmittance), alpha (opacity), gamma (positional encoding), mu và Sigma (mean và covariance), Theta (trọng số mạng), K, R, C (nội tại, xoay, tâm camera) |
 
-**Tóm tắt (~200 từ, viết sau cùng)** theo 4 câu: *bối cảnh → khoảng trống → việc đã làm → kết quả cụ thể*.
+**Tóm tắt** viết sau cùng, khoảng 200 từ, gồm bốn câu theo trình tự: bối cảnh, khoảng trống nghiên cứu, việc đã thực hiện, kết quả cụ thể đạt được.
 
 ---
 
-# CHƯƠNG 1 — GIỚI THIỆU (~7 trang)
+## CHƯƠNG 1. GIỚI THIỆU (khoảng 7 trang)
 
-## 1.1. Ý nghĩa khoa học của chủ đề 🟡 (~1 trang)
+### 1.1. Ý nghĩa khoa học của chủ đề `[Một phần]` (khoảng 1 trang)
 
-**Bốn đoạn:**
+Mục này gồm bốn đoạn, mỗi đoạn một thông điệp.
 
-1. **Đặt vấn đề.** Con người nhìn vật từ vài góc là hình dung được hình dạng 3D. Máy tính khó ở chỗ: ảnh 2D đã mất thông tin độ sâu, một pixel ứng với vô số điểm 3D khả dĩ. Bài toán **tổng hợp góc nhìn mới (novel view synthesis)** là khôi phục khả năng đó.
-2. **Quá trình phát triển trước NeRF.** Nội suy light field (cần ảnh dày đặc) → mesh (khó tối ưu) → voxel grid (bộ nhớ lũy thừa) → neural implicit surface (cần ground-truth 3D). Mỗi hướng vướng một rào cản cơ bản.
-3. **Vì sao NeRF là bước ngoặt.** (a) Chuyển từ biểu diễn tường minh sang **biểu diễn ẩn** — nén cả cảnh vào vài MB trọng số; (b) chỉ cần ảnh RGB thường, **không cần dữ liệu 3D ground-truth**; (c) chất lượng photorealistic lần đầu đạt được.
-4. **Vị trí trong nghiên cứu hiện nay.** NeRF mở ra nhánh neural rendering; số công trình kế thừa tăng vọt từ 2020, dẫn tới 3D Gaussian Splatting (2023).
+**Đoạn 1 — Đặt vấn đề.** Con người chỉ cần nhìn một vật từ vài góc là hình dung được hình dạng ba chiều của nó, trong khi máy tính gặp khó khăn vì ảnh hai chiều đã mất thông tin độ sâu: mỗi điểm ảnh tương ứng với vô số điểm ba chiều khả dĩ. Bài toán tổng hợp góc nhìn mới (novel view synthesis) chính là khôi phục khả năng này cho máy tính.
 
-**Hình 1.1:** minh họa bài toán — vài ảnh input ở các góc → ảnh output ở góc chưa chụp.
+**Đoạn 2 — Quá trình phát triển trước NeRF.** Các hướng tiếp cận trước đó đều vướng một rào cản cơ bản: nội suy light field đòi hỏi ảnh lấy mẫu rất dày; biểu diễn lưới tam giác khó tối ưu và cần mô hình mẫu có sẵn; lưới voxel tiêu tốn bộ nhớ tăng theo lũy thừa của độ phân giải; biểu diễn bề mặt ẩn cần dữ liệu ba chiều xác thực làm đầu vào huấn luyện.
 
-**Trích dẫn:** `Survey/2022 Advances in Neural Rendering`, `Survey/2022 CVM Review`, `Selected/2020 NeRF`
+**Đoạn 3 — Vì sao NeRF là bước ngoặt.** NeRF khắc phục đồng thời ba hạn chế trên: chuyển từ biểu diễn tường minh sang biểu diễn ẩn nên nén được toàn cảnh vào vài megabyte trọng số; chỉ cần ảnh màu thông thường mà không cần dữ liệu ba chiều xác thực; và lần đầu đạt chất lượng ảnh gần với ảnh chụp thật.
 
-## 1.2. Ý nghĩa ứng dụng 🔴 (~1 trang)
+**Đoạn 4 — Vị trí trong bức tranh nghiên cứu hiện nay.** NeRF mở ra nhánh nghiên cứu neural rendering với số lượng công trình kế thừa tăng nhanh từ năm 2020, dẫn tới sự xuất hiện của 3D Gaussian Splatting năm 2023.
 
-Mỗi lĩnh vực 1 đoạn, nêu rõ **vì sao NeRF phù hợp**, không chỉ liệt kê:
+*Hình 1.1:* minh họa bài toán — một số ảnh đầu vào ở các góc khác nhau, dẫn tới ảnh đầu ra ở góc chưa từng chụp.
 
-| Lĩnh vực | Góc nhìn cần nhấn |
+*Nguồn trích dẫn:* `Survey/2022 Advances in Neural Rendering`, `Survey/2022 CVM Review`, `Selected/2020 NeRF`.
+
+### 1.2. Ý nghĩa ứng dụng của chủ đề `[Chưa có]` (khoảng 1 trang)
+
+Mỗi lĩnh vực viết một đoạn, nêu rõ lý do NeRF phù hợp thay vì chỉ liệt kê tên lĩnh vực.
+
+| Lĩnh vực | Lý do NeRF phù hợp |
 |---|---|
-| VR/AR, metaverse | Dựng môi trường 3D chân thực nhanh, thay vì mô hình hóa thủ công hàng tháng |
-| Số hóa di sản | Bảo tồn hiện vật không thể chạm vào; chỉ cần ảnh chụp thường |
-| Thương mại điện tử | Xem sản phẩm 360°, thử đồ ảo |
-| Bất động sản, du lịch | Tham quan ảo không gian thật |
-| Robot, xe tự hành | Dựng bản đồ 3D từ camera giá rẻ thay vì LiDAR |
-| Điện ảnh, VFX | Dựng cảnh từ footage thật, chèn vật thể ảo khớp ánh sáng |
+| Thực tế ảo và tăng cường | Dựng môi trường ba chiều chân thực nhanh, thay cho việc mô hình hóa thủ công kéo dài hàng tháng |
+| Số hóa di sản | Bảo tồn hiện vật không thể tiếp xúc trực tiếp, chỉ cần ảnh chụp thông thường |
+| Thương mại điện tử | Cho phép xem sản phẩm từ mọi góc và thử sản phẩm ảo |
+| Bất động sản và du lịch | Tham quan ảo không gian thật |
+| Robot và xe tự hành | Dựng bản đồ ba chiều từ camera giá rẻ thay cho cảm biến LiDAR đắt tiền |
+| Điện ảnh và kỹ xảo | Dựng cảnh từ cảnh quay thật, chèn vật thể ảo khớp điều kiện ánh sáng |
 
-> Nêu 1-2 ví dụ có thật (ví dụ Google Maps Immersive View) sẽ thuyết phục hơn liệt kê chung.
+Nên nêu một đến hai ví dụ triển khai thực tế, chẳng hạn tính năng Immersive View của Google Maps, để tăng tính thuyết phục.
 
-## 1.3. Phát biểu bài toán 🟢 (~3,5 trang) ⭐ MỤC QUAN TRỌNG NHẤT CHƯƠNG 1
+### 1.3. Phát biểu bài toán `[Sẵn sàng]` (khoảng 3,5 trang)
 
-> ⚠️ **LƯU Ý 1:** framework chỉ nêu công đoạn tổng quát, **tuyệt đối không nhắc tên phương pháp cụ thể** (không viết "dùng COLMAP", "dùng MLP").
-> ⚠️ **LƯU Ý 2:** mỗi công đoạn phải nêu rõ **đã cho gì** và **ẩn số cần tìm là gì**.
+Đây là mục quan trọng nhất của Chương 1 vì nó định nghĩa trục tổ chức cho toàn bộ báo cáo.
 
-### 1.3.1. Input và Output của hệ thống
+**Lưu ý 1:** framework chỉ mô tả công đoạn ở mức tổng quát, không được nhắc tên phương pháp cụ thể như COLMAP hay MLP.
+**Lưu ý 2:** mỗi công đoạn phải nêu rõ dữ kiện đã cho và ẩn số cần tìm.
 
-**Input:**
-- Tập ảnh RGB 2D: `{I₁, I₂, ..., I_N}`, N ≈ 20-100 ảnh
-- Ràng buộc: cảnh **tĩnh** (vật thể/ánh sáng không đổi giữa các ảnh), độ **chồng lấp** giữa các ảnh liên tiếp đủ lớn
+#### 1.3.1. Đầu vào và đầu ra của hệ thống
 
-**Output:**
-- Ảnh RGB render tại camera pose **tùy ý** chưa có trong tập input
-- Mở rộng: video quay quanh cảnh; mô hình 3D dạng mesh
+**Đầu vào** là tập ảnh màu hai chiều `{I_1, I_2, ..., I_N}` với N khoảng 20 đến 100 ảnh. Hai ràng buộc bắt buộc: cảnh phải tĩnh trong suốt quá trình chụp, nghĩa là vật thể và điều kiện ánh sáng không đổi giữa các ảnh; và các ảnh liên tiếp phải có độ chồng lấp đủ lớn.
 
-### 1.3.2. Framework chung — bốn công đoạn
+**Đầu ra** là ảnh màu được kết xuất tại một tư thế camera tùy ý không có trong tập đầu vào. Đầu ra mở rộng gồm chuỗi ảnh tạo thành video quay quanh cảnh, hoặc mô hình ba chiều dạng lưới tam giác.
 
-> ⚠️ **LƯU Ý 1** — mô tả ở mức tổng quát, mỗi công đoạn có nhiều giải pháp khả dĩ (sẽ khảo sát ở Chương 2).
+#### 1.3.2. Framework chung gồm bốn công đoạn
 
 ```
                          ┌──────────────────────────────────┐
@@ -118,552 +145,579 @@ Mỗi lĩnh vực 1 đoạn, nêu rõ **vì sao NeRF phù hợp**, không chỉ 
                                             ▲                │
                                             │     ┌──────────▼────────┐
                                             └─────┤ CĐ4: Tối ưu hóa   │
-                                                  │ biểu diễn (so với │
-                                                  │ ảnh thật)         │
+                                                  │ biểu diễn         │
                                                   └───────────────────┘
 ```
 
-**Hình 1.2:** sơ đồ trên, vẽ lại đẹp bằng công cụ vẽ.
+*Hình 1.2:* sơ đồ framework bốn công đoạn, vẽ lại bằng công cụ đồ họa.
 
-Mô tả từng công đoạn ở mức tổng quát:
+**Bảng 1.1. Mô tả bốn công đoạn ở mức tổng quát**
 
-| Công đoạn | Nhiệm vụ | Các hướng giải pháp khả dĩ (chưa chọn) |
+| Công đoạn | Nhiệm vụ | Các hướng giải pháp khả dĩ |
 |---|---|---|
-| **CĐ1** | Xác định mỗi ảnh được chụp từ vị trí nào, hướng nào, với ống kính ra sao | Structure-from-Motion, SLAM, cảm biến gắn kèm, pose có sẵn (dữ liệu tổng hợp) |
-| **CĐ2** | Xây dựng cấu trúc dữ liệu/hàm số mô tả cảnh 3D, truy vấn được tại điểm bất kỳ | Biểu diễn tường minh (mesh, voxel, point cloud, Gaussian) hoặc ẩn (mạng nơ-ron, hàm liên tục) |
-| **CĐ3** | Từ biểu diễn + một góc nhìn, sinh ra ảnh 2D | Rasterization, ray tracing, ray marching + volume rendering, splatting |
-| **CĐ4** | Điều chỉnh tham số của biểu diễn sao cho ảnh sinh ra khớp ảnh quan sát | Gradient descent (nếu quy trình khả vi), phương pháp tối ưu phi tuyến, lấp đầy trực tiếp |
+| CĐ1 | Xác định mỗi ảnh được chụp từ vị trí nào, hướng nào, với thông số ống kính ra sao | Structure-from-Motion, SLAM, cảm biến gắn kèm, hoặc tư thế có sẵn với dữ liệu tổng hợp |
+| CĐ2 | Xây dựng cấu trúc dữ liệu hoặc hàm số mô tả cảnh, truy vấn được tại điểm bất kỳ | Biểu diễn tường minh (lưới tam giác, voxel, đám mây điểm, Gaussian) hoặc biểu diễn ẩn (mạng nơ-ron, hàm liên tục) |
+| CĐ3 | Từ biểu diễn và một góc nhìn, sinh ra ảnh hai chiều | Rasterization, ray tracing, ray marching kết hợp volume rendering, splatting |
+| CĐ4 | Điều chỉnh tham số của biểu diễn để ảnh sinh ra khớp với ảnh quan sát | Hạ gradient khi quy trình khả vi, tối ưu phi tuyến, hoặc lấp đầy trực tiếp |
 
-### 1.3.3. Ẩn số cần tìm trong từng công đoạn
+#### 1.3.3. Ẩn số cần tìm trong từng công đoạn
 
-> ⚠️ **LƯU Ý 2** — đây là mục thầy nhấn mạnh là hay bị bỏ sót. Phải viết rõ ràng, có bảng.
+Giảng viên nhấn mạnh đây là nội dung thường bị bỏ sót (Lưu ý 2), do đó cần trình bày rõ ràng bằng bảng.
 
-**Bảng 1.1 — Đã cho và ẩn số của từng công đoạn:**
+**Bảng 1.2. Dữ kiện đã cho và ẩn số cần tìm**
 
-| Công đoạn | Đã cho (biết) | **Ẩn số cần tìm** | Ràng buộc để giải |
+| Công đoạn | Dữ kiện đã cho | Ẩn số cần tìm | Ràng buộc dùng để giải |
 |---|---|---|---|
-| **CĐ1** | Tập ảnh `{I₁..I_N}` | Với mỗi ảnh `i`: ma trận nội tại `Kᵢ`, ma trận xoay `Rᵢ`, tâm camera `Cᵢ`. Kèm theo: tập điểm 3D thưa `{X_j}` | Cùng một điểm vật lý xuất hiện trên nhiều ảnh phải chiếu về đúng vị trí quan sát được (sai số tái chiếu nhỏ nhất) |
-| **CĐ2** | Không gian cảnh được giới hạn; dạng biểu diễn đã chọn | **Tham số `Θ` của biểu diễn** — tùy dạng mà `Θ` là trọng số mạng, giá trị trên lưới voxel, hay tập tham số của các primitive | `Θ` phải sinh ra ảnh khớp với mọi ảnh quan sát được |
-| **CĐ3** | Biểu diễn `Θ`, camera pose cần render | *(Không có ẩn số học)* — đây là bước tính toán xuôi. Ẩn số thiết kế: chọn thuật toán kết xuất nào, lấy mẫu bao nhiêu điểm | Phải khả vi nếu muốn dùng gradient descent ở CĐ4 |
-| **CĐ4** | Ảnh render `Ĉ`, ảnh thật `C` | `Θ` tối ưu — chính là ẩn số của CĐ2, được giải ở đây | Tối thiểu hóa hàm mất mát giữa `Ĉ` và `C` |
+| CĐ1 | Tập ảnh `{I_1..I_N}` | Với mỗi ảnh i: ma trận nội tại `K_i`, ma trận xoay `R_i`, tâm camera `C_i`; kèm tập điểm ba chiều thưa `{X_j}` | Cùng một điểm vật lý xuất hiện trên nhiều ảnh phải chiếu về đúng vị trí quan sát được, tức sai số tái chiếu nhỏ nhất |
+| CĐ2 | Phạm vi không gian cảnh; dạng biểu diễn đã chọn | Tham số `Theta` của biểu diễn. Tùy dạng biểu diễn mà `Theta` là trọng số mạng, giá trị trên lưới voxel, hoặc tập tham số của các primitive | `Theta` phải sinh ra ảnh khớp với mọi ảnh quan sát được |
+| CĐ3 | Biểu diễn `Theta` và tư thế camera cần kết xuất | Không có ẩn số phải học. Ẩn số thiết kế gồm: chọn thuật toán kết xuất nào, lấy bao nhiêu điểm mẫu | Quy trình phải khả vi nếu muốn dùng hạ gradient ở CĐ4 |
+| CĐ4 | Ảnh kết xuất và ảnh thật tương ứng | `Theta` tối ưu, chính là ẩn số của CĐ2 được giải tại đây | Tối thiểu hóa hàm mất mát giữa ảnh kết xuất và ảnh thật |
 
-> **Nhận xét quan trọng cần viết:** CĐ2 và CĐ4 **gắn chặt với nhau** — CĐ2 định nghĩa *dạng* của ẩn số `Θ`, CĐ4 là *cách tìm* ra `Θ`. Việc chọn dạng biểu diễn ở CĐ2 quyết định luôn CĐ4 giải được bằng cách nào. Đây là chỗ các phương pháp khác nhau nhiều nhất (xem Chương 2).
+Hai công đoạn CĐ2 và CĐ4 gắn chặt với nhau: CĐ2 quyết định dạng của ẩn số `Theta`, còn CĐ4 quyết định cách tìm ra `Theta`. Việc chọn dạng biểu diễn ở CĐ2 do đó ràng buộc luôn phương pháp tối ưu khả dụng ở CĐ4. Đây cũng là nơi các phương pháp khác nhau nhiều nhất, sẽ khảo sát ở Chương 2.
 
-### 1.3.4. Các tác vụ cần thực hiện
+#### 1.3.4. Các tác vụ cần thực hiện
 
-Liệt kê cụ thể hóa 4 công đoạn thành các tác vụ thực thi được (đây là phần thầy yêu cầu ở `phuongphap.rtf` 2.4).
+Cụ thể hóa bốn công đoạn thành danh sách tác vụ thực thi được, theo yêu cầu tại `phuongphap.rtf` mục 2.4.
 
-### 1.3.5. Tập dữ liệu thử nghiệm chuẩn
+#### 1.3.5. Tập dữ liệu thử nghiệm chuẩn
 
-> ⚠️ **LƯU Ý 7** — không chỉ nêu số lượng, phải nêu **thách thức** chứa trong dữ liệu.
+**Lưu ý 7:** không chỉ nêu số lượng mà phải nêu rõ dữ liệu chứa thách thức gì.
 
-**Bảng 1.2 — Các bộ dữ liệu chuẩn của bài toán:**
+**Bảng 1.3. Các bộ dữ liệu chuẩn của bài toán**
 
-| Dataset | Số cảnh | Loại | **Thách thức chứa trong dữ liệu** |
+| Bộ dữ liệu | Số cảnh | Loại | Thách thức chứa trong dữ liệu |
 |---|---|---|---|
-| Blender Synthetic | 8 vật thể | Tổng hợp, 360° | Vật liệu non-Lambertian (phản chiếu), hình học phức tạp (dây chằng tàu thủy, bánh răng) |
-| LLFF | 8 cảnh | Thật, forward-facing | Cảnh thật có nhiễu, nội dung từ gần tới vô cực, vùng bị che khuất một phần |
-| **Mip-NeRF 360** | 9 cảnh (5 ngoài trời, 4 trong nhà) | Thật, 360° unbounded | **Cảnh không giới hạn** (nền trải tới chân trời), chi tiết cả gần lẫn rất xa, ánh sáng ngoài trời thay đổi, vùng ít ảnh quan sát |
+| Blender Synthetic | 8 vật thể | Tổng hợp, 360 độ | Vật liệu phản chiếu không tuân theo mô hình Lambert, hình học phức tạp như dây chằng tàu thủy và bánh răng |
+| LLFF | 8 cảnh | Thật, hướng về phía trước | Nhiễu ảnh thật, nội dung trải từ gần tới vô cực, vùng bị che khuất một phần |
+| Mip-NeRF 360 | 9 cảnh, gồm 5 ngoài trời và 4 trong nhà | Thật, 360 độ không giới hạn | Cảnh không giới hạn với nền trải tới chân trời, chi tiết ở nhiều tỉ lệ khác nhau, ánh sáng ngoài trời thay đổi, vùng có ít ảnh quan sát |
 
-## 1.4. Đóng góp của báo cáo 🟡 (~0,75 trang)
+### 1.4. Đóng góp của báo cáo `[Một phần]` (khoảng 0,75 trang)
 
-1. **Khảo sát có hệ thống** các phương pháp radiance field 2020-2024, **so sánh theo đúng bốn công đoạn** của framework, chỉ ra khuyết điểm tồn đọng ở từng công đoạn
-2. **Trình bày chi tiết Mip-NeRF 360** trong mạch kế thừa NeRF → Mip-NeRF → Mip-NeRF 360, làm rõ từng cải tiến tác động vào công đoạn nào
-3. **Cài đặt thử nghiệm** trên dữ liệu chuẩn và dữ liệu tự thu thập; đánh giá **cả độ chính xác lẫn độ phức tạp tính toán**
-4. **Phân tích hạn chế** qua quan sát thực nghiệm, đối chiếu với hướng phát triển mới nhất
+1. Khảo sát có hệ thống các phương pháp radiance field giai đoạn 2020 đến 2024, so sánh theo đúng bốn công đoạn của framework và chỉ ra khuyết điểm tồn đọng ở từng công đoạn.
+2. Trình bày chi tiết Mip-NeRF 360 trong mạch kế thừa NeRF, Mip-NeRF và Mip-NeRF 360, làm rõ mỗi cải tiến tác động vào công đoạn nào.
+3. Cài đặt thử nghiệm trên dữ liệu chuẩn và dữ liệu tự thu thập, đánh giá cả độ chính xác lẫn độ phức tạp tính toán.
+4. Phân tích hạn chế của phương pháp qua quan sát thực nghiệm và đối chiếu với các hướng phát triển mới nhất.
 
-> ⚠️ Thầy ghi rõ *"SV chỉ cần đọc, hiểu, cài đặt lại. Chưa đòi hỏi đề xuất giải pháp mới"* → **không** viết đóng góp kiểu "chúng tôi đề xuất phương pháp mới".
+Giảng viên ghi rõ tại `phuongphap.rtf` rằng sinh viên chỉ cần đọc, hiểu và cài đặt lại, chưa yêu cầu đề xuất giải pháp mới. Do đó không viết đóng góp theo kiểu đề xuất phương pháp mới.
 
-## 1.5. Bố cục báo cáo 🔴 (~0,25 trang)
+### 1.5. Bố cục báo cáo `[Chưa có]` (khoảng 0,25 trang)
 
 ---
 
-# CHƯƠNG 2 — CÁC CÔNG TRÌNH NGHIÊN CỨU LIÊN QUAN (~11 trang)
+## CHƯƠNG 2. CÁC CÔNG TRÌNH NGHIÊN CỨU LIÊN QUAN (khoảng 11 trang)
 
-> **Hai câu hỏi phải trả lời:** *Người ta đã làm gì rồi?* (2.1-2.4) · *Mình muốn làm gì?* (2.5)
->
-> ⚠️ **LƯU Ý 3** — mọi giải pháp trình bày theo **cùng một khuôn**, bám theo **bốn công đoạn** ở mục 1.3.2.
-> ⚠️ **LƯU Ý 8** — phải chỉ ra **khuyết điểm tồn đọng theo từng công đoạn**, phân loại *độ chính xác* hay *độ phức tạp tính toán*.
+Chương này trả lời hai câu hỏi giảng viên yêu cầu: người ta đã làm gì rồi (mục 2.1 đến 2.4) và mình muốn làm gì (mục 2.5).
 
-## 2.1. Các phương pháp trước NeRF 🟡 (~1,5 trang)
+**Lưu ý 3:** mọi giải pháp trình bày theo cùng một khuôn, bám theo bốn công đoạn ở mục 1.3.2.
+**Lưu ý 8:** phải chỉ ra khuyết điểm tồn đọng theo từng công đoạn và phân loại thuộc độ chính xác hay độ phức tạp tính toán.
 
-Trình bày theo công đoạn để thấy mỗi hướng vướng ở đâu:
+### 2.1. Các phương pháp trước NeRF `[Một phần]` (khoảng 1,5 trang)
 
-| Nhóm phương pháp | CĐ2 (Biểu diễn) | CĐ3 (Kết xuất) | Rào cản chính |
+Trình bày theo công đoạn để thấy rõ mỗi hướng vướng rào cản ở đâu.
+
+**Bảng 2.1. Các phương pháp trước NeRF, đối chiếu theo công đoạn**
+
+| Nhóm phương pháp | CĐ2: Biểu diễn | CĐ3: Kết xuất | Rào cản chính |
 |---|---|---|---|
-| Light field / IBR | Tập ảnh gốc + thông tin độ sâu thô | Nội suy giữa ảnh | Cần lấy mẫu rất dày |
-| Mesh-based | Lưới tam giác | Rasterization / path tracing | Tối ưu khó hội tụ, cần mesh mẫu |
-| Voxel grid | Lưới 3D rời rạc | Ray marching | Bộ nhớ tăng lũy thừa theo độ phân giải |
-| Neural implicit surface | Hàm SDF/occupancy ẩn | Tìm giao điểm bề mặt | Cần ground-truth 3D; kết quả mờ |
+| Light field và image-based rendering | Tập ảnh gốc kèm thông tin độ sâu thô | Nội suy giữa các ảnh | Đòi hỏi lấy mẫu rất dày |
+| Lưới tam giác | Lưới tam giác | Rasterization hoặc path tracing | Tối ưu khó hội tụ, cần mô hình mẫu |
+| Lưới voxel | Lưới ba chiều rời rạc | Ray marching | Bộ nhớ tăng theo lũy thừa độ phân giải |
+| Bề mặt ẩn neural | Hàm khoảng cách có dấu hoặc hàm chiếm chỗ | Tìm giao điểm với bề mặt | Cần dữ liệu ba chiều xác thực, kết quả bị mờ |
 
-## 2.2. NeRF — phương pháp nền tảng 🟢 (~2 trang)
+### 2.2. NeRF và các hạn chế `[Sẵn sàng]` (khoảng 2 trang)
 
-**2.2.1. Ánh xạ NeRF vào bốn công đoạn** (khuôn chuẩn, áp dụng cho mọi phương pháp sau):
+#### 2.2.1. Ánh xạ NeRF vào bốn công đoạn
 
-| Công đoạn | NeRF giải quyết thế nào |
+Mục này thiết lập khuôn chuẩn áp dụng cho mọi phương pháp trình bày sau đó.
+
+**Bảng 2.2. NeRF theo bốn công đoạn**
+
+| Công đoạn | Cách NeRF giải quyết |
 |---|---|
-| CĐ1 | Dùng Structure-from-Motion (COLMAP) ước lượng `K, R, C` |
-| CĐ2 | Hàm liên tục `F_Θ(x,d) → (c,σ)` cài trong MLP 8 lớp × 256 kênh |
-| CĐ3 | Ray marching + volume rendering: lấy 192 điểm mẫu/tia, tích lũy theo công thức transmittance |
-| CĐ4 | Gradient descent (Adam) trên loss MSE giữa ảnh render và ảnh thật |
+| CĐ1 | Dùng Structure-from-Motion, cụ thể là COLMAP, để ước lượng `K`, `R`, `C` |
+| CĐ2 | Hàm liên tục `F_Theta(x, d)` trả về màu và density, cài đặt bằng MLP 8 lớp 256 kênh |
+| CĐ3 | Ray marching kết hợp volume rendering, lấy 192 điểm mẫu mỗi tia, chia hai lượt thô và tinh |
+| CĐ4 | Hạ gradient bằng thuật toán Adam trên hàm mất mát bình phương trung bình |
 
-**2.2.2. Năm hạn chế của NeRF — gắn với công đoạn và phân loại:**
+#### 2.2.2. Năm hạn chế của NeRF
 
-> ⚠️ **LƯU Ý 8** — phân loại rõ *độ chính xác* hay *độ phức tạp tính toán*.
+Mỗi hạn chế được gắn với công đoạn tương ứng và phân loại theo yêu cầu của Lưu ý 8.
 
-| # | Hạn chế | Thuộc công đoạn | Loại khuyết điểm | Nguyên nhân kỹ thuật |
+**Bảng 2.3. Hạn chế của NeRF theo công đoạn**
+
+| Số | Hạn chế | Công đoạn | Loại khuyết điểm | Nguyên nhân kỹ thuật |
 |---|---|---|---|---|
-| 1 | Train chậm (1-2 ngày/cảnh) | CĐ2 + CĐ4 | Độ phức tạp tính toán | Mỗi điểm mẫu qua MLP 8×256; hàng trăm nghìn điểm/batch |
-| 2 | Render chậm, không real-time | CĐ3 | Độ phức tạp tính toán | 192 lần truy vấn mạng cho mỗi pixel |
-| 3 | Răng cưa khi đổi tỉ lệ | CĐ3 | Độ chính xác | Tia mảnh không biểu diễn được vùng pixel thực sự bao phủ |
-| 4 | Kém với cảnh 360° unbounded | CĐ2 + CĐ3 | Độ chính xác | Lấy mẫu tuyến tính theo `t`; NDC chỉ dùng cho forward-facing |
-| 5 | Phụ thuộc pose chính xác | CĐ1 | Độ chính xác | Pose sai → tia không giao đúng chỗ → hình học nhòe |
+| 1 | Huấn luyện chậm, mất một đến hai ngày cho mỗi cảnh | CĐ2 và CĐ4 | Độ phức tạp tính toán | Mỗi điểm mẫu phải đi qua MLP 8 lớp 256 kênh, với hàng trăm nghìn điểm mỗi batch |
+| 2 | Kết xuất chậm, không đạt thời gian thực | CĐ3 | Độ phức tạp tính toán | Mỗi điểm ảnh cần 192 lần truy vấn mạng |
+| 3 | Răng cưa khi thay đổi tỉ lệ hoặc khoảng cách | CĐ3 | Độ chính xác | Tia mảnh không biểu diễn được vùng không gian mà điểm ảnh thực sự bao phủ |
+| 4 | Kém hiệu quả với cảnh 360 độ không giới hạn | CĐ2 và CĐ3 | Độ chính xác | Lấy mẫu tuyến tính theo tham số tia; phép biến đổi NDC chỉ áp dụng được cho cảnh hướng về phía trước |
+| 5 | Phụ thuộc vào độ chính xác của tư thế camera | CĐ1 | Độ chính xác | Tư thế sai làm các tia không giao đúng vị trí, dẫn tới hình học bị nhòe |
 
-## 2.3. Các giải pháp SOTA 🟢 (~4 trang)
+### 2.3. Các giải pháp tiên tiến `[Sẵn sàng]` (khoảng 4 trang)
 
-> ⚠️ **LƯU Ý 3** — **mỗi phương pháp trình bày theo CÙNG một khuôn 5 mục:**
-> *(a) Giải quyết khuyết điểm nào · (b) Tác động vào công đoạn nào · (c) Ý tưởng cốt lõi · (d) Kết quả đạt được · (e) Hạn chế còn lại*
+**Lưu ý 3:** mỗi phương pháp trình bày theo cùng một khuôn năm mục — khuyết điểm được giải quyết, công đoạn tác động, ý tưởng cốt lõi, kết quả đạt được, hạn chế còn lại. Mỗi phương pháp viết khoảng nửa trang.
 
-Áp dụng khuôn này cho 7 phương pháp, mỗi phương pháp ~0,5 trang:
+**Bảng 2.4. Tám phương pháp tiên tiến và phạm vi tác động**
 
-| Mục | Phương pháp | Khuyết điểm giải quyết | Công đoạn tác động |
+| Mục | Phương pháp | Khuyết điểm được giải quyết | Công đoạn tác động |
 |---|---|---|---|
-| 2.3.1 | **Instant-NGP** (SIGGRAPH 2022) | #1 Train chậm | CĐ2 (hash encoding thay PE, MLP nhỏ) + CĐ3 (occupancy grid bỏ qua vùng trống) |
-| 2.3.2 | **Plenoxels** (CVPR 2022) | #1 Train chậm | CĐ2 (bỏ hẳn mạng nơ-ron, dùng voxel thưa + SH) |
-| 2.3.3 | **TensoRF** (ECCV 2022) | #1 Train chậm | CĐ2 (phân rã tensor bậc thấp) |
-| 2.3.4 | **Mip-NeRF** (ICCV 2021) | #3 Răng cưa | CĐ3 (hình nón cụt thay tia mảnh) + CĐ2 (IPE thay PE) |
-| 2.3.5 | **NeRF++** (2020) | #4 Cảnh unbounded | CĐ2 (tách 2 mạng trong/ngoài khối cầu) |
-| 2.3.6 | **Mip-NeRF 360** (CVPR 2022) | #3 + #4 | CĐ2 (scene contraction) + CĐ3 (lấy mẫu theo disparity) + CĐ4 (proposal net, distortion loss) |
-| 2.3.7 | **3D Gaussian Splatting** (SIGGRAPH 2023) | #2 Render chậm | CĐ2 (Gaussian tường minh) + CĐ3 (rasterization thay ray marching) |
-| 2.3.8 | **Zip-NeRF** (ICCV 2023) | #1 + #3 + #4 | Kết hợp Mip-NeRF 360 (CĐ2,3,4) + hash grid của Instant-NGP (CĐ2) |
+| 2.3.1 | Instant-NGP, SIGGRAPH 2022 | Số 1, huấn luyện chậm | CĐ2 qua hash encoding thay positional encoding và MLP thu nhỏ; CĐ3 qua lưới chiếm chỗ bỏ qua vùng trống |
+| 2.3.2 | Plenoxels, CVPR 2022 | Số 1, huấn luyện chậm | CĐ2, bỏ hẳn mạng nơ-ron, dùng voxel thưa kèm hệ số Spherical Harmonics |
+| 2.3.3 | TensoRF, ECCV 2022 | Số 1, huấn luyện chậm | CĐ2, phân rã tensor bậc thấp |
+| 2.3.4 | Mip-NeRF, ICCV 2021 | Số 3, răng cưa | CĐ3 qua hình nón cụt thay tia mảnh; CĐ2 qua Integrated Positional Encoding |
+| 2.3.5 | NeRF++, 2020 | Số 4, cảnh không giới hạn | CĐ2, tách hai mạng cho vùng trong và ngoài khối cầu đơn vị |
+| 2.3.6 | Mip-NeRF 360, CVPR 2022 | Số 3 và số 4 | CĐ2 qua scene contraction; CĐ3 qua lấy mẫu theo disparity; CĐ4 qua proposal network và distortion loss |
+| 2.3.7 | 3D Gaussian Splatting, SIGGRAPH 2023 | Số 2, kết xuất chậm | CĐ2 qua biểu diễn Gaussian tường minh; CĐ3 qua rasterization thay ray marching |
+| 2.3.8 | Zip-NeRF, ICCV 2023 | Số 1, số 3 và số 4 | Kết hợp Mip-NeRF 360 ở CĐ2, CĐ3, CĐ4 với hash grid của Instant-NGP ở CĐ2 |
 
-## 2.4. Bảng so sánh các giải pháp theo công đoạn 🟡 (~2 trang)
+### 2.4. Bảng so sánh các giải pháp theo công đoạn `[Một phần]` (khoảng 2 trang)
 
-> ⚠️ **LƯU Ý 3** — đây là bảng thầy yêu cầu: **cột ứng với các công đoạn**, hàng là phương pháp.
+Đây là bảng giảng viên yêu cầu tại Lưu ý 3, với cột ứng với các công đoạn và hàng là phương pháp.
 
-**Bảng 2.1 — So sánh theo bốn công đoạn (bảng chính):**
+**Bảng 2.5. So sánh tám phương pháp theo bốn công đoạn**
 
-| Phương pháp | CĐ1: Ước lượng pose | CĐ2: Biểu diễn cảnh | CĐ3: Kết xuất | CĐ4: Tối ưu |
+| Phương pháp | CĐ1: Ước lượng tư thế | CĐ2: Biểu diễn cảnh | CĐ3: Kết xuất | CĐ4: Tối ưu |
 |---|---|---|---|---|
-| NeRF | SfM (COLMAP) | MLP 8×256, PE | Ray marching, 192 mẫu/tia, coarse+fine | MSE loss, Adam |
-| NeRF++ | SfM | 2 MLP (trong/ngoài cầu), tham số hóa `1/r` | Ray marching 2 đoạn, ghép transmittance | MSE loss |
-| Mip-NeRF | SfM | 1 MLP, **IPE** (mã hóa vùng) | **Hình nón cụt** thay tia mảnh | MSE loss, giám sát đa tỉ lệ |
-| Plenoxels | SfM | **Voxel thưa + hệ số SH** (không mạng) | Ray marching + nội suy tam tuyến | Gradient trực tiếp lên voxel + TV regularization |
-| Instant-NGP | SfM | **Hash grid đa độ phân giải** + MLP nhỏ | Ray marching + **occupancy grid** | MSE loss, Adam (ε=10⁻¹⁵) |
-| TensoRF | SfM | **Tensor phân rã bậc thấp** | Ray marching | MSE + regularization |
-| **Mip-NeRF 360** | SfM | **Scene contraction** + MLP 8×1024 + off-axis IPE | Lấy mẫu đều theo **disparity**, hình nón cụt | MSE + **L_prop** (distillation) + **L_dist** (distortion) |
-| 3D Gaussian Splatting | SfM (+ dùng cả sparse point cloud) | **Hàng triệu Gaussian 3D tường minh** | **Rasterization/splatting** | L1 + D-SSIM, **adaptive density control** |
+| NeRF | Structure-from-Motion | MLP 8 lớp 256 kênh, positional encoding | Ray marching, 192 mẫu mỗi tia, hai lượt thô và tinh | Mất mát bình phương trung bình, Adam |
+| NeRF++ | Structure-from-Motion | Hai MLP cho trong và ngoài khối cầu, tham số hóa nghịch đảo bán kính | Ray marching hai đoạn, ghép transmittance | Mất mát bình phương trung bình |
+| Mip-NeRF | Structure-from-Motion | Một MLP, Integrated Positional Encoding mã hóa vùng | Hình nón cụt thay tia mảnh | Mất mát bình phương trung bình, giám sát đa tỉ lệ |
+| Plenoxels | Structure-from-Motion | Voxel thưa kèm hệ số Spherical Harmonics, không dùng mạng | Ray marching kết hợp nội suy tam tuyến tính | Gradient trực tiếp lên voxel, kèm chính quy hóa biến phân toàn phần |
+| Instant-NGP | Structure-from-Motion | Hash grid đa độ phân giải kết hợp MLP nhỏ | Ray marching kết hợp lưới chiếm chỗ | Mất mát bình phương trung bình, Adam với epsilon rất nhỏ |
+| TensoRF | Structure-from-Motion | Tensor phân rã bậc thấp | Ray marching | Mất mát bình phương trung bình kèm chính quy hóa |
+| Mip-NeRF 360 | Structure-from-Motion | Scene contraction, MLP 8 lớp 1024 kênh, off-axis IPE | Lấy mẫu đều theo disparity, hình nón cụt | Mất mát tái tạo, mất mát distillation, mất mát distortion |
+| 3D Gaussian Splatting | Structure-from-Motion, dùng thêm đám mây điểm thưa | Hàng triệu Gaussian ba chiều tường minh | Rasterization theo kiểu splatting | Mất mát L1 kết hợp D-SSIM, điều khiển mật độ thích ứng |
 
-**Bảng 2.2 — So sánh hiệu năng (độ chính xác + độ phức tạp tính toán):**
+**Bảng 2.6. So sánh hiệu năng theo hai nhóm độ đo**
 
-> ⚠️ **LƯU Ý 6** — phải có **cả hai loại** độ đo.
+Lưu ý 6 yêu cầu có cả độ chính xác lẫn độ phức tạp tính toán.
 
-| Phương pháp | PSNR↑ | SSIM↑ | LPIPS↓ | Thời gian train | Tốc độ render | Bộ nhớ | Số truy vấn mạng/tia |
+| Phương pháp | PSNR | SSIM | LPIPS | Thời gian huấn luyện | Tốc độ kết xuất | Bộ nhớ | Số truy vấn mạng mỗi tia |
 |---|---|---|---|---|---|---|---|
 
-**⚠️ Quy tắc bắt buộc khi lập 2 bảng này:**
-- Mỗi con số **ghi rõ nguồn** (paper nào, Bảng mấy) bằng chú thích dưới bảng
-- **Ghi rõ điều kiện đo** (phần cứng, dataset) — các paper đo trên cấu hình khác nhau, không chú thích sẽ bị hỏi "sao so TPU với GPU được"
-- Ưu tiên lấy số từ **một nguồn đo chung** (ví dụ Table 1 của `Selected/2022 Mip-NeRF 360` đo nhiều phương pháp trên cùng dataset) — đây là so sánh công bằng nhất
+Ba quy tắc bắt buộc khi lập hai bảng trên. Thứ nhất, mỗi con số phải ghi rõ nguồn gồm tên công trình và số hiệu bảng, đặt ở chú thích dưới bảng. Thứ hai, phải ghi rõ điều kiện đo gồm phần cứng và bộ dữ liệu, vì các công trình đo trên cấu hình khác nhau. Thứ ba, ưu tiên lấy số liệu từ một nguồn đo chung, chẳng hạn Bảng 1 của `Selected/2022 Mip-NeRF 360` có đo nhiều phương pháp trên cùng bộ dữ liệu, vì đây là so sánh công bằng nhất.
 
-## 2.5. Khuyết điểm tồn đọng và định hướng của đồ án 🔴 (~1,5 trang)
+### 2.5. Khuyết điểm tồn đọng và định hướng của đồ án `[Chưa có]` (khoảng 1,5 trang)
 
-> ⚠️ **LƯU Ý 8** — mục này thầy nhấn mạnh: phải **nhìn ra khuyết điểm còn tồn đọng cần giải quyết trong các công đoạn**.
+Mục này đáp ứng Lưu ý 8, yêu cầu nhìn ra khuyết điểm còn tồn đọng cần giải quyết trong các công đoạn.
 
-**Bảng 2.3 — Khuyết điểm tồn đọng theo từng công đoạn:**
+**Bảng 2.7. Khuyết điểm tồn đọng theo từng công đoạn**
 
-| Công đoạn | Khuyết điểm còn tồn đọng | Loại | Đã có ai giải quyết tới đâu |
+| Công đoạn | Khuyết điểm còn tồn đọng | Loại | Mức độ đã được giải quyết |
 |---|---|---|---|
-| **CĐ1** | Phụ thuộc hoàn toàn vào chất lượng SfM; thất bại với cảnh ít kết cấu, bề mặt phản chiếu; không xử lý được cảnh động | Độ chính xác | Hướng pose-free NeRF (BARF, NeRF--) — chưa trưởng thành |
-| **CĐ2** | Đánh đổi giữa dung lượng và chất lượng chưa giải quyết triệt để: biểu diễn ẩn gọn nhưng chậm, tường minh nhanh nhưng nặng hàng trăm MB | Cả hai | Zip-NeRF cố gắng dung hòa nhưng vẫn chưa real-time như 3DGS |
-| **CĐ3** | Ray marching vẫn tốn nhiều truy vấn; rasterization nhanh nhưng mất tính liên tục, khó biểu diễn hiệu ứng trong suốt/khúc xạ | Độ phức tạp tính toán | 3DGS đạt real-time nhưng đánh đổi dung lượng |
-| **CĐ4** | Cần nhiều ảnh (20-100); chất lượng sụp nhanh khi ít ảnh; xuất hiện floaters ở vùng ít quan sát | Độ chính xác | L_dist của Mip-NeRF 360 giảm được floaters; hướng few-shot NeRF còn mở |
+| CĐ1 | Phụ thuộc hoàn toàn vào chất lượng Structure-from-Motion; thất bại với cảnh ít kết cấu hoặc bề mặt phản chiếu; chưa xử lý được cảnh động | Độ chính xác | Hướng NeRF không cần tư thế như BARF và NeRF-- còn chưa trưởng thành |
+| CĐ2 | Đánh đổi giữa dung lượng và chất lượng chưa được giải quyết triệt để: biểu diễn ẩn gọn nhưng chậm, biểu diễn tường minh nhanh nhưng nặng hàng trăm megabyte | Cả hai | Zip-NeRF dung hòa được một phần nhưng vẫn chưa đạt thời gian thực như 3D Gaussian Splatting |
+| CĐ3 | Ray marching vẫn tốn nhiều lần truy vấn; rasterization nhanh nhưng mất tính liên tục và khó biểu diễn hiệu ứng trong suốt hoặc khúc xạ | Độ phức tạp tính toán | 3D Gaussian Splatting đạt thời gian thực nhưng đánh đổi dung lượng |
+| CĐ4 | Cần nhiều ảnh đầu vào, khoảng 20 đến 100; chất lượng giảm nhanh khi ít ảnh; xuất hiện vật thể ảo lơ lửng ở vùng ít quan sát | Độ chính xác | Mất mát distortion của Mip-NeRF 360 giảm được vật thể ảo; hướng NeRF ít ảnh còn đang mở |
 
-**Định hướng của đồ án — trả lời "mình muốn làm gì":**
-- **Lý do chọn Mip-NeRF 360:** giải quyết đồng thời 2 khuyết điểm (#3 răng cưa ở CĐ3, #4 cảnh unbounded ở CĐ2+CĐ3), tác động vào cả 3 công đoạn CĐ2-CĐ3-CĐ4; đại diện nhánh biểu diễn ẩn đạt chất lượng cao nhất; nằm trong mạch kế thừa rõ ràng thuận lợi để trình bày có hệ thống
-- **Phạm vi:** đọc hiểu, trình bày lại, cài đặt thử nghiệm — **không** đề xuất phương pháp mới
+**Định hướng của đồ án.** Mip-NeRF 360 được chọn vì ba lý do. Thứ nhất, nó giải quyết đồng thời hai khuyết điểm là răng cưa ở CĐ3 và cảnh không giới hạn ở CĐ2 cùng CĐ3. Thứ hai, nó tác động vào cả ba công đoạn CĐ2, CĐ3 và CĐ4, nên trình bày được đầy đủ hơn so với các phương pháp chỉ tác động một công đoạn. Thứ ba, nó nằm trong mạch kế thừa rõ ràng từ NeRF qua Mip-NeRF, thuận lợi cho việc trình bày có hệ thống. Phạm vi đồ án giới hạn ở đọc hiểu, trình bày lại và cài đặt thử nghiệm, không đề xuất phương pháp mới.
 
 ---
 
-# CHƯƠNG 3 — PHƯƠNG PHÁP: MIP-NERF 360 (~15 trang) ⭐ TRỌNG TÂM
+## CHƯƠNG 3. PHƯƠNG PHÁP MIP-NERF 360 (khoảng 15 trang)
 
-> ⚠️ **`phuongphap.rtf` 2.6:** mạch **nguyên lý → phương pháp → giải thuật → CT minh họa**
-> ⚠️ **LƯU Ý 4, 5:** phải nêu rõ ground truth, cách "đánh nhãn", loss function; phải có sơ đồ riêng cho **giai đoạn học** và **giai đoạn kiểm thử**
+Chương này là trọng tâm của báo cáo, trình bày theo mạch logic mà `phuongphap.rtf` mục 2.6 yêu cầu: nguyên lý, phương pháp, giải thuật, chương trình minh họa.
 
-## 3.0. Dẫn nhập: ba vấn đề Mip-NeRF 360 giải quyết 🟢 (~0,5 trang)
+**Lưu ý 4 và 5:** phải nêu rõ dữ liệu xác thực, cách đánh nhãn, hàm mất mát; và phải có sơ đồ riêng cho giai đoạn học và giai đoạn kiểm thử.
 
-| Vấn đề (theo paper) | Mô tả | Thuộc công đoạn | Giải ở mục |
+### 3.0. Ba vấn đề Mip-NeRF 360 giải quyết `[Sẵn sàng]` (khoảng 0,5 trang)
+
+Đặt khung cho toàn chương, theo đúng cách công trình gốc tổ chức nội dung.
+
+**Bảng 3.1. Ba vấn đề và vị trí giải quyết**
+
+| Vấn đề | Mô tả | Công đoạn | Giải quyết tại mục |
 |---|---|---|---|
-| **Parameterization** | Cảnh 360° trải tới vô cực, không lấy mẫu tuyến tính được | CĐ2 + CĐ3 | 3.3.1 |
-| **Efficiency** | Cảnh lớn cần mạng dung lượng lớn, truy vấn dày đặc quá tốn | CĐ3 + CĐ4 | 3.3.2 |
-| **Ambiguity** | Nội dung có thể ở bất kỳ độ sâu nào, ít ảnh quan sát → artifact | CĐ4 | 3.3.3 |
+| Parameterization | Cảnh 360 độ trải tới vô cực nên không lấy mẫu tuyến tính được | CĐ2 và CĐ3 | 3.3.1 |
+| Efficiency | Cảnh lớn cần mạng dung lượng lớn, nhưng truy vấn dày đặc mạng lớn thì quá tốn kém | CĐ3 và CĐ4 | 3.3.2 |
+| Ambiguity | Nội dung cảnh có thể nằm ở bất kỳ độ sâu nào, cộng với ít ảnh quan sát, dẫn tới hiện tượng nhiễu hình học | CĐ4 | 3.3.3 |
 
-## 3.1. NGUYÊN LÝ — Nền tảng NeRF 🟢 (~4 trang)
+### 3.1. Nguyên lý: nền tảng NeRF `[Sẵn sàng]` (khoảng 4 trang)
 
-- **3.1.1.** Biểu diễn cảnh bằng trường bức xạ 5D `F_Θ(x,d) → (c,σ)` · ý nghĩa "trường" · vì sao biểu diễn **ẩn** · định lý xấp xỉ phổ quát · **Bảng 3.1** chú thích ký hiệu
-- **3.1.2.** Mô hình pinhole camera · phép chiếu phối cảnh (tam giác đồng dạng) · ma trận `K`, `(R,C)` · công thức tia `r(t)=o+t·d` · **Hình 3.1**
-- **3.1.3.** Lấy mẫu phân tầng (stratified sampling) · vì sao không dùng lưới cố định
-- **3.1.4.** Positional Encoding `γ(p)` · vấn đề **spectral bias** · L=10 (vị trí, 60 chiều), L=4 (hướng, 24 chiều)
-- **3.1.5.** Kiến trúc MLP 8×256 · skip connection · **điểm thiết kế then chốt:** σ chỉ phụ thuộc vị trí, màu phụ thuộc cả hướng nhìn → nhất quán đa góc nhìn + mô phỏng được hiệu ứng view-dependent · **Hình 3.2**
-- **3.1.6.** Volume Rendering · định nghĩa chính xác σ (xác suất vi phân) · công thức tích phân liên tục + dẫn `T(t)` từ phương trình vi phân (Beer-Lambert) · công thức rời rạc là tổng Riemann · **Bảng 3.2** · **ví dụ số 3 điểm mẫu** minh họa occlusion
-- **3.1.7.** Hierarchical sampling · trọng số `wᵢ=Tᵢαᵢ` · inverse transform sampling · hàm loss MSE cộng cả 2 nhánh
+- **3.1.1.** Biểu diễn cảnh bằng trường bức xạ năm chiều `F_Theta(x, d)`. Giải thích khái niệm trường theo nghĩa vật lý, lý do gọi là biểu diễn ẩn, và định lý xấp xỉ phổ quát. Kèm Bảng 3.2 chú thích ký hiệu.
+- **3.1.2.** Mô hình camera lỗ kim và phép chiếu phối cảnh dựa trên tam giác đồng dạng. Ma trận nội tại `K`, ma trận xoay `R`, tâm camera `C`, công thức tia `r(t) = o + t*d`. Kèm Hình 3.1.
+- **3.1.3.** Lấy mẫu phân tầng và lý do không dùng lưới điểm cố định.
+- **3.1.4.** Positional encoding, hiện tượng thiên lệch phổ (spectral bias), và hai giá trị L bằng 10 cho vị trí tạo 60 chiều, L bằng 4 cho hướng tạo 24 chiều.
+- **3.1.5.** Kiến trúc MLP 8 lớp 256 kênh và kết nối tắt. Điểm thiết kế then chốt: density chỉ phụ thuộc vị trí trong khi màu phụ thuộc cả hướng nhìn, nhờ đó vừa đảm bảo nhất quán đa góc nhìn vừa mô phỏng được hiệu ứng phụ thuộc góc nhìn. Kèm Hình 3.2.
+- **3.1.6.** Volume rendering. Định nghĩa chính xác density là xác suất vi phân, công thức tích phân liên tục, cách dẫn hàm transmittance từ phương trình vi phân theo định luật Beer-Lambert, và chứng minh công thức rời rạc là tổng Riemann xấp xỉ tích phân. Kèm Bảng 3.3 và một ví dụ số với ba điểm mẫu minh họa hiện tượng che khuất.
+- **3.1.7.** Lấy mẫu phân cấp với trọng số, phương pháp inverse transform sampling, và hàm mất mát cộng gộp cả hai nhánh.
 
-**Nguyên liệu:** `02-TaiLieuHoc/pipeline_NeRF.md`, `lythuyet_NeRF.md` · **Trích dẫn:** `Selected/2020 NeRF`, `Foundation/1995 Optical Models`
+*Nguyên liệu:* `02-TaiLieuHoc/pipeline_NeRF.md`, `lythuyet_NeRF.md`. *Trích dẫn:* `Selected/2020 NeRF`, `Foundation/1995 Optical Models`.
 
-## 3.2. Preliminaries — Mip-NeRF: chống răng cưa 🟡 (~2,5 trang)
+### 3.2. Kiến thức nền: Mip-NeRF và vấn đề răng cưa `[Một phần]` (khoảng 2,5 trang)
 
-- **3.2.1.** Vấn đề aliasing: pixel là **vùng** không phải **điểm** · **Hình 3.3** so sánh tia mảnh vs hình nón
-- **3.2.2.** Hình nón cụt (conical frustum) · xấp xỉ Gaussian đa biến `(μ, Σ)` · **Bảng 3.3**
-- **3.2.3.** Integrated Positional Encoding: `IPE(μ,Σ) = E[γ(x)]` · dạng đóng với hệ số suy giảm `exp(-½(2^l π)²σ²)` · **trực giác:** tần số cao tự tắt khi vùng quá lớn → chống răng cưa có nguyên lý, không phải hậu xử lý
-- **3.2.4.** Gộp 2 mạng coarse/fine thành 1; vẫn giám sát đa tỉ lệ bằng loss ảnh (hệ số 1/10 cho coarse) — **chi tiết này quan trọng** vì chính nó là thứ bản 360 loại bỏ
+- **3.2.1.** Vấn đề răng cưa, xuất phát từ việc điểm ảnh là một vùng chứ không phải một điểm. Kèm Hình 3.3 so sánh tia mảnh với hình nón.
+- **3.2.2.** Hình nón cụt và phép xấp xỉ bằng phân phối Gaussian đa biến với tham số `mu` và `Sigma`. Kèm Bảng 3.4.
+- **3.2.3.** Integrated Positional Encoding, định nghĩa là kỳ vọng của positional encoding trên phân phối Gaussian. Dạng đóng cho thấy biên độ bị nhân với hệ số suy giảm phụ thuộc phương sai. Trực giác quan trọng: thành phần tần số cao tự động bị triệt tiêu khi vùng không gian quá lớn, nhờ đó chống răng cưa có cơ sở toán học thay vì xử lý hậu kỳ.
+- **3.2.4.** Gộp hai mạng thô và tinh thành một mạng duy nhất, nhưng vẫn giám sát đa tỉ lệ bằng mất mát ảnh với hệ số nhỏ cho nhánh thô. Chi tiết này quan trọng vì chính nó là thành phần mà Mip-NeRF 360 loại bỏ.
 
-**Trích dẫn:** `Selected/2021 Mip-NeRF` ⚠️ **cần đọc** để lấp các chỗ `[MIP-NỀN]`
+*Trích dẫn:* `Selected/2021 Mip-NeRF`. Cần đọc công trình này để bổ sung các nội dung hiện chưa xác minh được trong `pipeline_MipNeRF360.md`.
 
-## 3.3. PHƯƠNG PHÁP — Mip-NeRF 360 🟢 (~5 trang)
+### 3.3. Phương pháp Mip-NeRF 360 `[Sẵn sàng]` (khoảng 5 trang)
 
-**3.3.1. Parameterization — Scene Contraction** *(tác động CĐ2 + CĐ3)* (~1,75 trang)
-- Vấn đề cụ thể · công thức `contract(x)` (Eq. 10) · ⚠️ bán kính đo **từ gốc tọa độ world**, không phải từ camera
-- **Đóng góp cốt lõi:** áp phép co lên **Gaussian (μ,Σ)** theo kiểu Extended Kalman filter (`f(μ), JΣJᵀ` — Eq. 8-9), không chỉ lên điểm
-- Tham số hóa lại tia: lấy mẫu đều trong không gian `s` (Eq. 11, `g(x)=1/x`) → tuyến tính theo **disparity**; `t_far = ∞` trở nên hợp lệ
-- **Off-axis IPE** (Eq. 17): nâng cấp bắt buộc vì contract sinh Gaussian dị hướng; cơ sở 21 đỉnh icosahedron
-- **Hình 3.4** minh họa phép co · **Bảng 3.4** ký hiệu
+#### 3.3.1. Giải quyết Parameterization bằng Scene Contraction (khoảng 1,75 trang)
 
-**3.3.2. Efficiency — Proposal Network + Online Distillation** *(tác động CĐ3 + CĐ4)* (~1,75 trang)
+Tác động vào CĐ2 và CĐ3. Nội dung gồm: công thức phép co không gian, lưu ý bán kính được đo từ gốc tọa độ thế giới chứ không phải từ camera; đóng góp cốt lõi là áp phép co lên cả phân phối Gaussian theo kiểu bộ lọc Kalman mở rộng chứ không chỉ lên điểm; cách tham số hóa lại tia để lấy mẫu đều theo disparity, nhờ đó cận xa vô hạn trở nên hợp lệ; và off-axis IPE là nâng cấp bắt buộc vì phép co sinh ra Gaussian rất dị hướng. Kèm Hình 3.4 và Bảng 3.5.
 
-| | Proposal MLP | NeRF MLP |
+#### 3.3.2. Giải quyết Efficiency bằng Proposal Network (khoảng 1,75 trang)
+
+Tác động vào CĐ3 và CĐ4.
+
+**Bảng 3.6. So sánh hai mạng trong kiến trúc**
+
+| Thuộc tính | Proposal MLP | NeRF MLP |
 |---|---|---|
-| Nhiệm vụ | Chỉ dự đoán density để hướng dẫn lấy mẫu | Dự đoán density **và màu** để render |
-| Kích thước | 4 lớp × 256 | 8 lớp × 1024 |
-| Số mẫu | 2 lượt × 64 | 32 |
+| Nhiệm vụ | Chỉ dự đoán density để hướng dẫn lấy mẫu | Dự đoán cả density và màu để kết xuất |
+| Kích thước | 4 lớp, 256 kênh | 8 lớp, 1024 kênh |
+| Số mẫu | Hai lượt, mỗi lượt 64 | 32 |
 
-- **Khác biệt căn bản với coarse/fine của NeRF:** proposal **không** dự đoán màu, **không** được giám sát bằng loss ảnh
-- Online distillation (Eq. 12-13): histogram density của proposal phải **bao trọn** histogram NeRF MLP; **stop-gradient**; `L_prop` là **chặn trên một phía bất đối xứng**
-- Kết quả: tăng tốc train ~300% (Ablation D) · **Hình 3.5** sơ đồ luồng dữ liệu
+Khác biệt căn bản so với cơ chế thô và tinh của NeRF: proposal network không dự đoán màu và không được giám sát bằng mất mát ảnh. Cơ chế huấn luyện là online distillation, trong đó histogram density của proposal phải bao trọn histogram của NeRF MLP, sử dụng kỹ thuật dừng gradient và một hàm mất mát dạng chặn trên một phía bất đối xứng. Kết quả là tăng tốc huấn luyện khoảng ba lần. Kèm Hình 3.5.
 
-**3.3.3. Ambiguity — Distortion Loss** *(tác động CĐ4)* (~1,5 trang)
-- Hai artifact có tên riêng: **floaters** và **background collapse**
-- Công thức `L_dist` (Eq. 14-15) · tính trên không gian `s` chứ không trên `t` (paper nêu rõ lý do)
-- ⚠️ **Phát hiện quan trọng (Ablation B):** bỏ `L_dist` **không** làm PSNR/SSIM/LPIPS xấu đi (PSNR còn nhỉnh hơn: 24.41 vs 24.37), chỉ sinh floaters thấy trên depth map → **không được viết "L_dist cải thiện PSNR"**
-- **Hình 3.6** depth map có/không `L_dist`
+#### 3.3.3. Giải quyết Ambiguity bằng Distortion Loss (khoảng 1,5 trang)
 
-## 3.4. GIẢI THUẬT — Tiến trình hoạt động của hệ thống 🟢 (~2,5 trang)
+Tác động vào CĐ4. Hai hiện tượng nhiễu có tên riêng là floaters, tức vật thể ảo lơ lửng, và background collapse, tức nền bị sụp vào gần. Hàm mất mát distortion phạt phân phối trọng số bị phân tán dọc tia, khuyến khích dồn gọn tại một vị trí, phù hợp với bản chất bề mặt là một lớp mỏng. Chi tiết cần nêu: hàm này tính trên không gian đã tham số hóa lại chứ không trên tham số tia gốc.
 
-> ⚠️ **LƯU Ý 5** — thầy yêu cầu trình bày rõ tiến trình **cả giai đoạn học lẫn giai đoạn kiểm thử**. Tách thành 2 mục riêng, 2 sơ đồ riêng.
+Một phát hiện quan trọng từ nghiên cứu loại trừ của công trình gốc: bỏ mất mát distortion không làm xấu các chỉ số PSNR, SSIM và LPIPS, thậm chí PSNR còn nhỉnh hơn, nhưng lại sinh ra vật thể ảo nhìn thấy được trên bản đồ độ sâu. Do đó không được viết rằng mất mát distortion cải thiện PSNR. Kèm Hình 3.6.
 
-### 3.4.1. Giai đoạn học (Training)
+### 3.4. Giải thuật: tiến trình hoạt động của hệ thống `[Sẵn sàng]` (khoảng 2,5 trang)
 
-> ⚠️ **LƯU Ý 4** — phải nêu rõ input, ground truth, cách đánh nhãn, loss function.
+Lưu ý 5 yêu cầu trình bày rõ tiến trình của cả giai đoạn học lẫn giai đoạn kiểm thử, do đó tách thành hai mục với hai sơ đồ riêng.
 
-**Bảng 3.5 — Đặc tả giai đoạn học:**
+#### 3.4.1. Giai đoạn học
+
+Lưu ý 4 yêu cầu nêu rõ đầu vào, dữ liệu xác thực, cách đánh nhãn và hàm mất mát.
+
+**Bảng 3.7. Đặc tả giai đoạn học**
 
 | Thành phần | Nội dung |
 |---|---|
-| **Input** | Tập ảnh `{Iᵢ}` + pose `(Kᵢ,Rᵢ,Cᵢ)` từ CĐ1 |
-| **Output xác thực (ground truth)** | **Màu RGB thật của từng pixel** trong các ảnh đã chụp |
-| **Cách đánh nhãn** | ⭐ **Không cần đánh nhãn thủ công.** Bản thân ảnh chụp chính là nhãn — mỗi pixel `(u,v)` của ảnh `Iᵢ` tương ứng một tia, và màu pixel đó là giá trị đích mà tia phải render ra. Đây là bài toán **tự giám sát (self-supervised)** — khác hẳn các bài toán thị giác máy tính cần người gán nhãn thủ công |
-| **Loss function** | `L = L_recon + λ_prop·L_prop + λ_dist·L_dist` — trong đó `L_recon` là MSE giữa màu render và màu thật, `L_prop` là distillation loss cho proposal network, `L_dist` là distortion loss |
-| **Tham số được tối ưu** | `Θ` = trọng số của NeRF MLP và Proposal MLP |
-| **Thuật toán tối ưu** | Adam, learning rate giảm theo lịch |
+| Đầu vào | Tập ảnh kèm tư thế camera thu được từ CĐ1 |
+| Dữ liệu xác thực | Màu của từng điểm ảnh trong các ảnh đã chụp |
+| Cách đánh nhãn | Không cần đánh nhãn thủ công. Bản thân ảnh chụp chính là nhãn: mỗi điểm ảnh tương ứng một tia, và màu điểm ảnh đó là giá trị đích mà tia phải kết xuất ra. Đây là bài toán tự giám sát, khác với các bài toán thị giác máy tính cần người gán nhãn |
+| Hàm mất mát | Tổng của ba thành phần: mất mát tái tạo dạng bình phương trung bình, mất mát distillation cho proposal network, và mất mát distortion |
+| Tham số được tối ưu | Trọng số của NeRF MLP và Proposal MLP |
+| Thuật toán tối ưu | Adam với tốc độ học giảm dần theo lịch |
 
-**Hình 3.7 — Sơ đồ giai đoạn học:**
+*Hình 3.7. Sơ đồ giai đoạn học*
+
 ```
-Ảnh + pose → chọn batch tia → lấy mẫu (contract, disparity) → Proposal MLP
-    → resample → NeRF MLP → volume rendering → Ĉ(r)
-                                                   │
-         Màu pixel thật C(r) ────────────────────► So sánh → Loss
-                                                              │
-                                              Backpropagation ▼
-                                                   Cập nhật Θ ──┐
-                                                                │
-                            (lặp N vòng) ◄──────────────────────┘
+Ảnh và tư thế → chọn batch tia → lấy mẫu → Proposal MLP
+    → lấy mẫu lại → NeRF MLP → volume rendering → ảnh kết xuất
+                                                       │
+         Màu điểm ảnh thật ───────────────────────────► So sánh → Mất mát
+                                                                    │
+                                                  Lan truyền ngược  ▼
+                                                      Cập nhật tham số ──┐
+                                                                         │
+                                   (lặp N vòng) ◄─────────────────────────┘
 ```
 
-**Mã giả một vòng lặp huấn luyện** — viết đầy đủ như trong dàn ý.
+Kèm mã giả mô tả đầy đủ một vòng lặp huấn luyện.
 
-### 3.4.2. Giai đoạn kiểm thử / suy luận (Testing / Inference)
+#### 3.4.2. Giai đoạn kiểm thử
 
-**Bảng 3.6 — Đặc tả giai đoạn kiểm thử:**
+**Bảng 3.8. Đặc tả giai đoạn kiểm thử**
 
 | Thành phần | Nội dung |
 |---|---|
-| **Input** | `Θ` đã học xong (cố định) + camera pose mới `(R,C)` do người dùng chọn |
-| **Ground truth** | **Không có** — đây là góc nhìn chưa từng chụp. *(Riêng khi đánh giá trên tập test thì có, vì tập test được giữ lại từ đầu)* |
-| **Output** | Ảnh RGB hoàn chỉnh ở góc nhìn mới |
-| **Có backpropagation?** | **Không** — chỉ forward pass thuần |
+| Đầu vào | Tham số đã học, giữ cố định, kèm tư thế camera mới do người dùng chọn |
+| Dữ liệu xác thực | Không có, vì đây là góc nhìn chưa từng chụp. Riêng khi đánh giá trên tập kiểm thử thì có, do tập này được giữ lại từ đầu |
+| Đầu ra | Ảnh màu hoàn chỉnh ở góc nhìn mới |
+| Lan truyền ngược | Không có, chỉ chạy một chiều thuận |
 
-**Hình 3.8 — Sơ đồ giai đoạn kiểm thử:**
+*Hình 3.8. Sơ đồ giai đoạn kiểm thử*
+
 ```
-Pose mới (R,C) → với MỖI pixel (u,v):
-                     sinh tia → lấy mẫu → Proposal MLP → resample
-                     → NeRF MLP → volume rendering → 1 màu pixel
-                 → ghép toàn bộ pixel → ẢNH OUTPUT
+Tư thế mới → với MỖI điểm ảnh:
+                sinh tia → lấy mẫu → Proposal MLP → lấy mẫu lại
+                → NeRF MLP → volume rendering → một màu điểm ảnh
+            → ghép toàn bộ điểm ảnh → ẢNH ĐẦU RA
 ```
 
-> **Điểm cần nhấn mạnh khi viết:** sự khác nhau giữa 2 giai đoạn không chỉ là "có/không backprop" mà còn ở chỗ: giai đoạn học **lấy ngẫu nhiên** batch tia từ nhiều ảnh khác nhau, còn giai đoạn kiểm thử phải chạy **toàn bộ** pixel của một ảnh theo đúng thứ tự.
+Khác biệt giữa hai giai đoạn không chỉ nằm ở việc có hay không lan truyền ngược. Giai đoạn học lấy ngẫu nhiên một batch tia từ nhiều ảnh khác nhau, trong khi giai đoạn kiểm thử phải chạy toàn bộ điểm ảnh của một ảnh theo đúng thứ tự.
 
-### 3.4.3. Bảng siêu tham số
-Trích đầy đủ từ paper: số vòng lặp, batch size, learning rate và lịch giảm, hệ số `λ` của từng thành phần loss, kích thước mạng, số mẫu mỗi lượt.
+#### 3.4.3. Bảng siêu tham số
 
-## 3.5. Tổng hợp: Mip-NeRF 360 thay đổi gì so với NeRF 🟢 (~1 trang)
+Trích đầy đủ từ công trình gốc: số vòng lặp, kích thước batch, tốc độ học và lịch giảm, hệ số của từng thành phần mất mát, kích thước mạng, số mẫu mỗi lượt.
 
-**Bảng 3.7 — Đối chiếu theo công đoạn:**
+### 3.5. Tổng hợp những thay đổi so với NeRF `[Sẵn sàng]` (khoảng 1 trang)
 
-| Thành phần | Công đoạn | NeRF (2020) | Mip-NeRF 360 (2022) | Nguồn cải tiến | Lý do | Hệ quả |
+**Bảng 3.9. Đối chiếu Mip-NeRF 360 với NeRF theo công đoạn**
+
+| Thành phần | Công đoạn | NeRF, 2020 | Mip-NeRF 360, 2022 | Nguồn cải tiến | Lý do | Hệ quả |
 |---|---|---|---|---|---|---|
-| Đơn vị lấy mẫu | CĐ3 | Tia mảnh | Hình nón cụt → Gaussian | Mip-NeRF 2021 | Pixel là vùng | Hết răng cưa |
-| Mã hóa input | CĐ2 | PE của điểm | Off-axis IPE của vùng | Mip-NeRF + **mới ở 360** | Gaussian dị hướng sau contract | SSIM 0.664→0.687 |
-| Không gian | CĐ2 | Tọa độ gốc | Scene contraction | **Mới ở 360** | Nén vô cực vào hữu hạn | Hỗ trợ 360° |
-| Lấy mẫu trên tia | CĐ3 | Tuyến tính theo `t` | Đều theo `s` (disparity) | **Mới ở 360** | Phân bổ mẫu hợp lý | `t_far=∞` hợp lệ |
-| Mạng dẫn đường | CĐ3+CĐ4 | Coarse MLP (có màu) | Proposal MLP (chỉ density) | **Mới ở 360** | Tách vai trò | Train nhanh ~300% |
-| Chính quy hóa | CĐ4 | Không có | Distortion loss | **Mới ở 360** | Chống floaters | Depth map sạch hơn |
+| Đơn vị lấy mẫu | CĐ3 | Tia mảnh | Hình nón cụt xấp xỉ bằng Gaussian | Mip-NeRF 2021 | Điểm ảnh là một vùng | Khử được răng cưa |
+| Mã hóa đầu vào | CĐ2 | Positional encoding của điểm | Off-axis IPE của vùng | Mip-NeRF kết hợp phần mới của bản 360 | Phép co sinh Gaussian dị hướng | SSIM tăng từ 0,664 lên 0,687 |
+| Không gian | CĐ2 | Tọa độ gốc | Scene contraction | Mới ở bản 360 | Nén vô cực vào miền hữu hạn | Hỗ trợ cảnh 360 độ |
+| Lấy mẫu trên tia | CĐ3 | Tuyến tính theo tham số tia | Đều theo disparity | Mới ở bản 360 | Phân bổ mẫu hợp lý theo độ sâu | Cận xa vô hạn trở nên hợp lệ |
+| Mạng dẫn đường | CĐ3 và CĐ4 | Mạng thô, dự đoán cả màu | Proposal MLP, chỉ dự đoán density | Mới ở bản 360 | Tách bạch vai trò | Huấn luyện nhanh khoảng ba lần |
+| Chính quy hóa | CĐ4 | Không có | Distortion loss | Mới ở bản 360 | Chống vật thể ảo lơ lửng | Bản đồ độ sâu sạch hơn |
 
-**Nguyên liệu:** `02-TaiLieuHoc/pipeline_MipNeRF360.md` (1.615 dòng, đã verify với paper)
+*Nguyên liệu:* `02-TaiLieuHoc/pipeline_MipNeRF360.md`, 1615 dòng, đã đối chiếu trực tiếp với công trình gốc.
 
 ---
 
-# CHƯƠNG 4 — CÀI ĐẶT VÀ THỬ NGHIỆM (~11 trang) 🔴
+## CHƯƠNG 4. CÀI ĐẶT VÀ THỬ NGHIỆM (khoảng 11 trang)
 
-> ⚠️ **`phuongphap.rtf` 2.7:** môi trường (phần cứng, phần mềm) · tập dữ liệu · bảng kết quả · đánh giá
-> ⚠️ **LƯU Ý 6:** độ đo phải có **cả độ chính xác lẫn độ phức tạp tính toán**, và phải phân tích **quan hệ loss ↔ độ đo**
-> ⚠️ **LƯU Ý 7:** mô tả dataset phải nêu **thách thức**, số mẫu, tính đa dạng, tiêu chí xây dựng
+Chương này đáp ứng `phuongphap.rtf` mục 2.7, gồm môi trường cài đặt, tập dữ liệu, bảng kết quả và đánh giá.
 
-## 4.1. Môi trường cài đặt (~1 trang)
+**Lưu ý 6:** độ đo phải gồm cả độ chính xác lẫn độ phức tạp tính toán, và phải phân tích quan hệ giữa hàm mất mát với độ đo.
+**Lưu ý 7:** mô tả tập dữ liệu phải nêu thách thức, số lượng mẫu, tính đa dạng và tiêu chí xây dựng.
 
-**4.1.1. Ràng buộc phần cứng và cách xử lý**
-- Máy cá nhân: MacBook Apple M2 Pro, 16GB RAM — **không có GPU NVIDIA/CUDA**; `tiny-cuda-nn` là CUDA kernel, không chạy trên Apple Silicon
-- Giải pháp: Google Colab / Kaggle
-- **Bảng 4.1:** đối chiếu phần cứng — máy cá nhân vs GPU Colab vs TPU v2 32 nhân của paper gốc. Bảng này giải thích trước mọi khác biệt về thời gian/kết quả ở mục 4.6
+### 4.1. Môi trường cài đặt (khoảng 1 trang)
 
-**4.1.2. Phần mềm** — bảng liệt kê phiên bản Python, PyTorch, CUDA, nerfstudio, COLMAP (để người đọc tái lập được)
+#### 4.1.1. Ràng buộc phần cứng và cách xử lý
 
-## 4.2. Lựa chọn và điều chỉnh mã nguồn (~1 trang)
+Máy cá nhân dùng chip Apple M2 Pro với 16 GB bộ nhớ, không có GPU NVIDIA và không hỗ trợ CUDA. Thư viện `tiny-cuda-nn` được viết bằng CUDA kernel nên không chạy được trên kiến trúc Apple Silicon. Giải pháp là dùng Google Colab hoặc Kaggle, nơi cung cấp GPU NVIDIA miễn phí.
 
-**4.2.1.** Bản gốc `multinerf` (Google, JAX) — vì sao **không** dùng trực tiếp
-**4.2.2.** Bản dùng thực tế: `nerfacto` — **bảng đối chiếu trung thực kế thừa gì:**
+**Bảng 4.1. Đối chiếu phần cứng**
 
-| Thành phần Mip-NeRF 360 | `nerfacto` | Ghi chú |
+| Nền tảng | Bộ xử lý | Bộ nhớ | Ghi chú |
+|---|---|---|---|
+| Máy cá nhân | Apple M2 Pro | 16 GB | Không chạy được CUDA |
+| Google Colab | GPU NVIDIA được cấp | Tùy phiên | Ghi rõ model GPU thực tế nhận được |
+| Công trình gốc | TPU v2, 32 nhân | | Phần cứng chuyên dụng của Google |
+
+Bảng này giải thích trước mọi khác biệt về thời gian và kết quả sẽ xuất hiện tại mục 4.6.
+
+#### 4.1.2. Phần mềm
+
+Lập bảng liệt kê phiên bản Python, PyTorch, CUDA, nerfstudio và COLMAP, để người đọc tái lập được thử nghiệm.
+
+### 4.2. Lựa chọn và điều chỉnh mã nguồn (khoảng 1 trang)
+
+#### 4.2.1. Mã nguồn sử dụng
+
+Bản triển khai gốc của nhóm tác giả là `multinerf`, viết bằng JAX. Báo cáo không dùng trực tiếp bản này vì nó yêu cầu TPU và thời gian huấn luyện vượt quá khuôn khổ đồ án. Bản được dùng thực tế là `nerfacto` của nerfstudio.
+
+#### 4.2.2. Mức độ kế thừa của nerfacto
+
+**Bảng 4.2. nerfacto kế thừa gì từ Mip-NeRF 360**
+
+| Thành phần của Mip-NeRF 360 | nerfacto có kế thừa | Ghi chú |
 |---|---|---|
-| Scene contraction | ✅ | Giữ nguyên |
-| Proposal network + online distillation | ✅ | Giữ nguyên |
-| Distortion loss | ✅ | Giữ nguyên |
-| Off-axis IPE | ❌ thay bằng hash encoding | Đánh đổi để tăng tốc |
-| MLP 8×1024 | ❌ thay bằng MLP nhỏ + hash grid | Đánh đổi để tăng tốc |
+| Scene contraction | Có | Giữ nguyên |
+| Proposal network và online distillation | Có | Giữ nguyên |
+| Distortion loss | Có | Giữ nguyên |
+| Off-axis IPE | Không, thay bằng hash encoding | Đánh đổi để tăng tốc |
+| MLP 8 lớp 1024 kênh | Không, thay bằng MLP nhỏ kết hợp hash grid | Đánh đổi để tăng tốc |
 
-> ⚠️ **Phải viết rõ.** Giấu đi mà bị hỏi là mất điểm nặng; trình bày trung thực kèm lý do thì thành điểm cộng.
+Nội dung bảng này bắt buộc phải trình bày trong báo cáo. Nếu giấu đi mà bị hỏi thì sẽ bị đánh giá thấp, trong khi trình bày trung thực kèm lý do lại cho thấy hiểu rõ cả hai phương pháp.
 
-**4.2.3. Phần tự viết** *(thầy yêu cầu: "tận dụng source code có sẵn **và tự viết**")*
-- Script tiền xử lý dữ liệu tự chụp (lọc ảnh mờ, resize, chuẩn hóa tên)
-- Script chạy COLMAP tự động + kiểm tra chất lượng pose
-- **Script đánh giá:** tính PSNR/SSIM/LPIPS, đo thời gian, đếm số truy vấn mạng, xuất bảng
-- Notebook tổng hợp tái lập toàn bộ thử nghiệm
-- Script dựng video demo
+#### 4.2.3. Phần tự viết
 
-## 4.3. Tập dữ liệu (~2 trang)
+Giảng viên yêu cầu tận dụng mã nguồn có sẵn và tự viết thêm. Phần tự viết gồm: script tiền xử lý dữ liệu tự chụp để lọc ảnh mờ, đổi kích thước và chuẩn hóa tên; script chạy COLMAP tự động kèm kiểm tra chất lượng tư thế; script đánh giá tính các chỉ số, đo thời gian, đếm số truy vấn mạng và xuất bảng; notebook tổng hợp để tái lập toàn bộ thử nghiệm; và script dựng video minh họa.
 
-> ⚠️ **LƯU Ý 7** — mục này thầy nhấn mạnh.
+### 4.3. Tập dữ liệu (khoảng 2 trang)
 
-**4.3.1. Tiêu chí xây dựng tập mẫu** — nêu rõ chọn dữ liệu theo nguyên tắc gì (phải chứa đúng thách thức mà phương pháp nhắm giải quyết: cảnh unbounded, chi tiết đa tỉ lệ)
+#### 4.3.1. Tiêu chí xây dựng tập mẫu
 
-**4.3.2. Dataset chuẩn** — chọn 1-2 cảnh từ bộ Mip-NeRF 360
+Dữ liệu được chọn theo nguyên tắc phải chứa đúng thách thức mà phương pháp nhắm giải quyết, cụ thể là cảnh không giới hạn và chi tiết ở nhiều tỉ lệ khác nhau.
 
-**Bảng 4.2 — Mô tả dataset:**
+#### 4.3.2. Bộ dữ liệu chuẩn
+
+Chọn một đến hai cảnh từ bộ Mip-NeRF 360.
+
+**Bảng 4.3. Mô tả bộ dữ liệu chuẩn**
 
 | Thuộc tính | Nội dung |
 |---|---|
-| Số lượng mẫu | Số ảnh train / test |
+| Số lượng mẫu | Số ảnh huấn luyện và số ảnh kiểm thử |
 | Độ phân giải | |
-| Cách chia train/test | Theo quy ước của paper (giữ lại mỗi ảnh thứ 8) |
-| **Cách "đánh nhãn"** | Tự giám sát — ảnh chụp chính là nhãn, không có khâu gán nhãn thủ công |
-| **Tính đa dạng** | Trong nhà / ngoài trời, vật thể gần / nền xa |
-| **⭐ Thách thức chứa trong dữ liệu** | Cảnh unbounded (nền tới chân trời), chi tiết đa tỉ lệ (lá cây mảnh ↔ toàn cảnh), bề mặt phản chiếu, ánh sáng ngoài trời thay đổi giữa các ảnh, vùng ít ảnh quan sát |
+| Cách chia tập | Theo quy ước của công trình gốc, giữ lại mỗi ảnh thứ tám làm tập kiểm thử |
+| Cách đánh nhãn | Tự giám sát, ảnh chụp chính là nhãn, không có khâu gán nhãn thủ công |
+| Tính đa dạng | Gồm cả cảnh trong nhà và ngoài trời, có vật thể gần và nền xa |
+| Thách thức chứa trong dữ liệu | Cảnh không giới hạn với nền trải tới chân trời, chi tiết ở nhiều tỉ lệ từ lá cây mảnh tới toàn cảnh, bề mặt phản chiếu, ánh sáng ngoài trời thay đổi giữa các ảnh, và vùng có ít ảnh quan sát |
 
-**4.3.3. Dataset tự thu thập** *(phần thể hiện công sức riêng)*
-- Quy trình chụp: thiết bị, số ảnh, cách di chuyển camera, điều kiện ánh sáng
-- **Thách thức cố ý đưa vào:** chọn cảnh có cả vật thể gần lẫn nền xa, có bề mặt phản chiếu → để kiểm chứng đúng khả năng mà Mip-NeRF 360 tuyên bố
-- **Hình 4.1:** vài ảnh mẫu · Lỗi gặp phải khi chụp và cách khắc phục
+#### 4.3.3. Bộ dữ liệu tự thu thập
 
-**4.3.4. Tiền xử lý bằng COLMAP** *(ứng với CĐ1)*
-- Quy trình: ảnh thô → feature extraction → matching → sparse reconstruction → xuất pose
-- **Hình 4.2:** kết quả COLMAP (sparse point cloud + vị trí camera)
-- Số liệu chất lượng CĐ1: số ảnh đăng ký thành công / tổng, số điểm 3D, **reprojection error trung bình**
+Mô tả quy trình chụp gồm thiết bị, số lượng ảnh, cách di chuyển camera và điều kiện ánh sáng. Cảnh được chọn có chủ đích chứa cả vật thể gần lẫn nền xa và có bề mặt phản chiếu, nhằm kiểm chứng đúng khả năng mà Mip-NeRF 360 tuyên bố. Kèm Hình 4.1 giới thiệu một số ảnh mẫu, và phần ghi nhận các lỗi gặp phải khi chụp cùng cách khắc phục.
 
-## 4.4. Độ đo đánh giá (~1,5 trang) ⭐ MỤC THẦY NHẤN MẠNH
+#### 4.3.4. Tiền xử lý bằng COLMAP
 
-> ⚠️ **LƯU Ý 6** — phải có **cả hai nhóm độ đo**, và phải phân tích **quan hệ giữa loss function và độ đo**.
+Bước này ứng với CĐ1. Quy trình gồm trích đặc trưng, khớp đặc trưng, tái tạo thưa và xuất tư thế camera. Kèm Hình 4.2 thể hiện đám mây điểm thưa và vị trí các camera. Cần ghi nhận số liệu chất lượng của CĐ1 gồm: số ảnh đăng ký thành công trên tổng số ảnh, số điểm ba chiều thu được, và sai số tái chiếu trung bình.
 
-### 4.4.1. Nhóm độ đo độ chính xác
+### 4.4. Độ đo đánh giá (khoảng 1,5 trang)
 
-| Độ đo | Đo cái gì | Chiều tốt | Đặc điểm |
+Đây là mục giảng viên nhấn mạnh tại Lưu ý 6.
+
+#### 4.4.1. Nhóm độ đo độ chính xác
+
+**Bảng 4.4. Ba độ đo chất lượng ảnh**
+
+| Độ đo | Đo đại lượng gì | Chiều tốt | Đặc điểm |
 |---|---|---|---|
-| **PSNR** | Sai khác pixel theo nghĩa số học, dẫn từ MSE | ↑ cao hơn tốt | Dễ tính, nhưng không phản ánh cảm nhận thị giác |
-| **SSIM** | Tương đồng về cấu trúc (độ sáng, tương phản, cấu trúc cục bộ) | ↑ cao hơn tốt | Gần cảm nhận người hơn PSNR |
-| **LPIPS** | Khác biệt theo cảm nhận, đo bằng đặc trưng của mạng học sẵn | ↓ thấp hơn tốt | Gần cảm nhận người nhất |
+| PSNR | Sai khác điểm ảnh theo nghĩa số học, dẫn từ sai số bình phương trung bình | Càng cao càng tốt | Dễ tính nhưng không phản ánh cảm nhận thị giác |
+| SSIM | Tương đồng về cấu trúc gồm độ sáng, tương phản và cấu trúc cục bộ | Càng cao càng tốt | Gần cảm nhận người hơn PSNR |
+| LPIPS | Khác biệt theo cảm nhận, đo bằng đặc trưng của mạng đã huấn luyện sẵn | Càng thấp càng tốt | Gần cảm nhận người nhất |
 
-### 4.4.2. Nhóm độ đo độ phức tạp tính toán
+#### 4.4.2. Nhóm độ đo độ phức tạp tính toán
+
+**Bảng 4.5. Năm độ đo chi phí**
 
 | Độ đo | Ý nghĩa |
 |---|---|
-| Thời gian huấn luyện | Giờ/cảnh trên phần cứng cụ thể |
-| Thời gian kết xuất | Giây/ảnh hoặc FPS |
-| **Số lần truy vấn mạng trên mỗi tia** | Độ phức tạp thuật toán, độc lập phần cứng — con số này **so sánh công bằng hơn** thời gian |
+| Thời gian huấn luyện | Số giờ cho mỗi cảnh, trên phần cứng cụ thể |
+| Thời gian kết xuất | Số giây cho mỗi ảnh, hoặc số khung hình mỗi giây |
+| Số lần truy vấn mạng mỗi tia | Độ phức tạp thuật toán, không phụ thuộc phần cứng |
 | Số tham số mô hình | Dung lượng lưu trữ |
-| Bộ nhớ GPU tiêu thụ khi train | Ràng buộc triển khai thực tế |
+| Bộ nhớ GPU tiêu thụ khi huấn luyện | Ràng buộc khi triển khai thực tế |
 
-> **Lưu ý khi viết:** nên nhấn mạnh *số lần truy vấn mạng/tia* vì đây là độ đo **không phụ thuộc phần cứng** — khắc phục được vấn đề mỗi paper đo trên máy khác nhau.
+Trong năm độ đo trên, số lần truy vấn mạng mỗi tia đáng được nhấn mạnh vì nó không phụ thuộc phần cứng, qua đó khắc phục được vấn đề mỗi công trình đo trên một cấu hình khác nhau.
 
-### 4.4.3. ⭐ Quan hệ giữa loss function và độ đo đánh giá
+#### 4.4.3. Quan hệ giữa hàm mất mát và độ đo đánh giá
 
-> ⚠️ **LƯU Ý 6** — thầy cảnh báo lỗi *"học một đằng, đánh giá một nẻo"*. Đây là mục thể hiện hiểu sâu.
+Giảng viên cảnh báo lỗi học một đằng đánh giá một nẻo tại Lưu ý 6. Mục này phân tích trực tiếp vấn đề đó.
 
-**Nội dung cần phân tích:**
+**Bảng 4.6. Mức độ liên hệ giữa hàm mất mát và từng độ đo**
 
-| Độ đo | Có được tối ưu trực tiếp bởi loss không? | Phân tích |
+| Độ đo | Có được tối ưu trực tiếp không | Phân tích |
 |---|---|---|
-| **PSNR** | ✅ **Có** — quan hệ trực tiếp | `L_recon` là MSE; mà `PSNR = 10·log₁₀(MAX²/MSE)`. Giảm MSE **tương đương** tăng PSNR. Đây là trường hợp "học đúng cái mình đánh giá" |
-| **SSIM** | ❌ Không | Mô hình không hề tối ưu cấu trúc cục bộ; SSIM cải thiện chỉ là **hệ quả gián tiếp** của việc giảm MSE |
-| **LPIPS** | ❌ Không | Mô hình không tối ưu đặc trưng tri giác |
+| PSNR | Có, quan hệ trực tiếp | Mất mát tái tạo là bình phương trung bình, trong khi PSNR được tính bằng logarit của tỉ số giữa giá trị cực đại và bình phương trung bình. Giảm bình phương trung bình tương đương tăng PSNR |
+| SSIM | Không | Mô hình không tối ưu cấu trúc cục bộ. SSIM cải thiện chỉ là hệ quả gián tiếp |
+| LPIPS | Không | Mô hình không tối ưu đặc trưng tri giác |
 
-**Hệ quả cần nêu — đây là chỗ ăn điểm:**
-- Vì chỉ MSE được tối ưu, mô hình có xu hướng cho ảnh **hơi mờ** (mờ đều thì MSE thấp hơn là sắc nét nhưng lệch chi tiết) → giải thích vì sao PSNR cao mà LPIPS vẫn có thể kém
-- Liên hệ với Ablation B của paper: bỏ `L_dist` làm PSNR **tăng nhẹ** nhưng sinh floaters — minh chứng rõ ràng rằng **tối ưu đúng độ đo chưa chắc cho kết quả tốt về mặt thị giác**
-- Đây chính xác là hiện tượng thầy cảnh báo, và việc nhận ra nó cho thấy hiểu bản chất
-- Ghi chú: 3D Gaussian Splatting dùng `L1 + D-SSIM` — tức **có** tối ưu SSIM trực tiếp, khác với NeRF
+Ba hệ quả cần nêu. Thứ nhất, vì chỉ bình phương trung bình được tối ưu, mô hình có xu hướng cho ảnh hơi mờ, bởi ảnh mờ đều cho sai số bình phương thấp hơn ảnh sắc nét nhưng lệch chi tiết. Điều này giải thích vì sao PSNR cao mà LPIPS vẫn có thể kém. Thứ hai, nghiên cứu loại trừ của công trình gốc cho thấy bỏ mất mát distortion làm PSNR tăng nhẹ nhưng sinh ra vật thể ảo, minh chứng rằng tối ưu đúng độ đo chưa chắc cho kết quả tốt về mặt thị giác. Thứ ba, có thể đối chiếu với 3D Gaussian Splatting, phương pháp này dùng mất mát kết hợp L1 với D-SSIM, tức có tối ưu SSIM trực tiếp, khác với NeRF.
 
-## 4.5. Kịch bản thử nghiệm (~0,5 trang)
+### 4.5. Kịch bản thử nghiệm (khoảng 0,5 trang)
+
+**Bảng 4.7. Bốn kịch bản thử nghiệm**
 
 | Mã | Mục đích | Dữ liệu | Cấu hình |
 |---|---|---|---|
-| TN1 | Đối chiếu với số liệu paper | 1-2 cảnh dataset chuẩn | `nerfacto` mặc định |
-| TN2 | Kiểm chứng trên dữ liệu tự thu thập | Dataset tự chụp | `nerfacto` mặc định |
-| TN3 | So sánh với baseline | Cùng dữ liệu TN2 | `nerfacto` vs `instant-ngp` |
-| TN4 | **Ablation** — vai trò từng thành phần | Cùng dữ liệu TN2 | Bật/tắt distortion loss; đổi số proposal samples |
+| TN1 | Đối chiếu với số liệu công bố | Một đến hai cảnh của bộ dữ liệu chuẩn | nerfacto mặc định |
+| TN2 | Kiểm chứng trên dữ liệu tự thu thập | Bộ dữ liệu tự chụp | nerfacto mặc định |
+| TN3 | So sánh với phương pháp đối chứng | Cùng dữ liệu TN2 | nerfacto so với instant-ngp |
+| TN4 | Nghiên cứu loại trừ | Cùng dữ liệu TN2 | Bật và tắt distortion loss, thay đổi số mẫu proposal |
 
-> TN4 là phần ăn điểm: paper top đầu nào cũng có ablation. Chỉ cần 1-2 cấu hình là đủ chứng minh hiểu cơ chế.
+Kịch bản TN4 có giá trị cao vì mọi công trình hàng đầu đều có nghiên cứu loại trừ. Chỉ cần thực hiện một đến hai cấu hình là đủ chứng minh nhóm hiểu cơ chế chứ không chỉ chạy lệnh có sẵn.
 
-## 4.6. Kết quả (~3 trang)
+### 4.6. Kết quả (khoảng 3 trang)
 
-**4.6.1. Kết quả định lượng**
-- **Bảng 4.3:** TN1 — kết quả của ta vs số liệu paper trên cùng cảnh (cột: PSNR, SSIM, LPIPS, thời gian train, số vòng lặp)
-- **Bảng 4.4:** TN2 + TN3 — so sánh phương pháp trên dữ liệu tự chụp, **có cả cột độ phức tạp tính toán** (thời gian, FPS, số tham số, VRAM)
+#### 4.6.1. Kết quả định lượng
 
-**4.6.2. Kết quả định tính**
-- **Hình 4.3:** Ground truth | Kết quả của ta | Baseline — có khung phóng to vùng chi tiết
-- **Hình 4.4:** depth map — kiểm tra hình học có sạch không, có floaters không
-- **Hình 4.5:** vài khung hình từ video quay camera quanh cảnh
+Bảng 4.8 trình bày kết quả TN1, đối chiếu kết quả thu được với số liệu công bố trên cùng cảnh, gồm các cột PSNR, SSIM, LPIPS, thời gian huấn luyện và số vòng lặp. Bảng 4.9 trình bày kết quả TN2 và TN3, so sánh các phương pháp trên dữ liệu tự chụp, có kèm các cột về độ phức tạp tính toán gồm thời gian, tốc độ khung hình, số tham số và bộ nhớ tiêu thụ.
 
-**4.6.3. Ablation Study (TN4)**
+#### 4.6.2. Kết quả định tính
 
-**Bảng 4.5:**
+Hình 4.3 đặt cạnh nhau ba ảnh gồm ảnh thật, kết quả thu được và kết quả của phương pháp đối chứng, kèm khung phóng to vùng chi tiết. Hình 4.4 trình bày bản đồ độ sâu để kiểm tra hình học học được có sạch không và có vật thể ảo không. Hình 4.5 trích một số khung hình từ video quay camera quanh cảnh.
+
+#### 4.6.3. Nghiên cứu loại trừ
+
+**Bảng 4.10. Kết quả nghiên cứu loại trừ**
 
 | Cấu hình | PSNR | SSIM | LPIPS | Thời gian | Quan sát định tính |
 |---|---|---|---|---|---|
 | Đầy đủ | | | | | |
-| Bỏ distortion loss | | | | | Kỳ vọng: số không xấu đi nhiều nhưng depth map có floaters |
-| Giảm proposal samples | | | | | |
+| Bỏ distortion loss | | | | | Dự kiến các chỉ số không xấu đi nhiều nhưng bản đồ độ sâu xuất hiện vật thể ảo |
+| Giảm số mẫu proposal | | | | | |
 
-> Nếu kết quả trùng phát hiện của paper (bỏ `L_dist` không làm PSNR xấu đi) thì đây là điểm rất mạnh — chứng minh tái lập được đúng hành vi paper mô tả, và **minh họa trực tiếp cho phân tích ở mục 4.4.3**.
+Nếu kết quả trùng với phát hiện của công trình gốc, cụ thể là bỏ distortion loss không làm PSNR xấu đi, thì đây là điểm mạnh của báo cáo vì nó chứng minh nhóm tái lập được đúng hành vi mà công trình mô tả, đồng thời minh họa trực tiếp cho phân tích tại mục 4.4.3.
 
-## 4.7. Đánh giá và thảo luận (~2 trang)
+### 4.7. Đánh giá và thảo luận (khoảng 2 trang)
 
-**Trả lời thẳng các câu hỏi:**
+Mục này trả lời bốn câu hỏi.
 
-1. **Kết quả có đạt như paper không?** Nếu thấp hơn, phân tích: khác phần cứng, khác implementation (`nerfacto` vs bản gốc), số vòng lặp ít hơn, dữ liệu tự chụp khó hơn
-2. **Đánh giá theo từng công đoạn** *(gắn lại với trục công đoạn xuyên suốt báo cáo)*:
+**Câu hỏi 1: kết quả có đạt như công bố không.** Nếu thấp hơn, phân tích các nguyên nhân gồm khác biệt phần cứng, khác biệt giữa nerfacto và bản triển khai gốc, số vòng lặp ít hơn, và độ khó của dữ liệu tự chụp.
 
-| Công đoạn | Quan sát thực nghiệm |
+**Câu hỏi 2: đánh giá theo từng công đoạn.** Mục này gắn kết quả thực nghiệm trở lại trục công đoạn xuyên suốt báo cáo.
+
+**Bảng 4.11. Quan sát thực nghiệm theo công đoạn**
+
+| Công đoạn | Nội dung cần ghi nhận |
 |---|---|
-| CĐ1 | COLMAP đăng ký được bao nhiêu % ảnh? Reprojection error? Có ảnh nào thất bại không, vì sao? |
-| CĐ2 | Dung lượng mô hình, có đủ dung lượng biểu diễn chi tiết không |
-| CĐ3 | Thời gian render/ảnh, số mẫu/tia thực tế |
-| CĐ4 | Loss hội tụ thế nào, có floaters không, cần bao nhiêu vòng lặp |
+| CĐ1 | Tỉ lệ ảnh được COLMAP đăng ký thành công, sai số tái chiếu, nguyên nhân các ảnh thất bại |
+| CĐ2 | Dung lượng mô hình, mức độ đủ để biểu diễn chi tiết |
+| CĐ3 | Thời gian kết xuất mỗi ảnh, số mẫu thực tế trên mỗi tia |
+| CĐ4 | Dạng hội tụ của hàm mất mát, có xuất hiện vật thể ảo không, số vòng lặp cần thiết |
 
-3. **Artifact quan sát được:** floaters ở đâu, vùng nào mờ → đối chiếu với hạn chế paper tự nêu
-4. **Hạn chế của chính quá trình thử nghiệm:** số cảnh ít, chưa chạy đủ vòng lặp, giới hạn phiên Colab
+**Câu hỏi 3: nhiễu hình học quan sát được.** Ghi nhận vật thể ảo xuất hiện ở đâu, vùng nào bị mờ, rồi đối chiếu với các hạn chế mà công trình gốc tự nêu.
 
----
-
-# CHƯƠNG 5 — KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN (~3 trang)
-
-## 5.1. Kết luận (~1 trang)
-- Tóm tắt đã làm gì: khảo sát theo 4 công đoạn, trình bày chi tiết Mip-NeRF 360, cài đặt và thử nghiệm
-- Kết quả chính (nêu con số)
-- Bài học: về kỹ thuật (cơ chế nào quan trọng) và về quy trình (dựng môi trường sớm, đọc paper gốc thay vì tài liệu thứ cấp)
-
-## 5.2. Hạn chế của đồ án (~0,75 trang)
-- **Phần cứng:** không có GPU riêng, phụ thuộc Colab
-- **Cài đặt:** dùng `nerfacto` thay bản gốc → không tái lập chính xác 100% kết quả paper
-- **Phạm vi:** ít cảnh thử nghiệm, chưa thử hết cấu hình, chưa so sánh được toàn bộ phương pháp ở Chương 2
-
-## 5.3. Hướng phát triển (~1,25 trang)
-
-**5.3.1. Hướng kỹ thuật** — mỗi hướng nêu rõ *giải quyết khuyết điểm nào ở công đoạn nào* (gắn với Bảng 2.3):
-- **Zip-NeRF (ICCV 2023)** — gộp scene contraction + IPE (CĐ2,3) với hash grid (CĐ2) → khắc phục khuyết điểm *độ phức tạp tính toán* mà ta gặp phải
-- **3D Gaussian Splatting (SIGGRAPH 2023)** — chuyển CĐ3 sang rasterization → real-time
-- **Mip-Splatting (CVPR 2024)** — mang chống răng cưa sang 3DGS
-- **Hướng pose-free NeRF** — giải khuyết điểm ở CĐ1 (phụ thuộc chất lượng SfM)
-
-**5.3.2. Hướng ứng dụng** — số hóa không gian cụ thể, tích hợp web 3D, tối ưu cho thiết bị di động
+**Câu hỏi 4: hạn chế của chính quá trình thử nghiệm.** Gồm số cảnh ít, chưa chạy đủ số vòng lặp, và giới hạn thời gian phiên làm việc của Colab.
 
 ---
 
-# TÀI LIỆU THAM KHẢO (~2 trang)
+## CHƯƠNG 5. KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN (khoảng 3 trang)
 
-16 tài liệu trong `03-Reference/`. **Thống nhất chuẩn IEEE**, trích dẫn dạng `[1]`, `[2]`.
+### 5.1. Kết luận (khoảng 1 trang)
 
-# PHỤ LỤC
+Tóm tắt những việc đã thực hiện: khảo sát các phương pháp theo bốn công đoạn, trình bày chi tiết Mip-NeRF 360, cài đặt và thử nghiệm trên dữ liệu chuẩn cùng dữ liệu tự thu thập. Nêu kết quả chính kèm số liệu cụ thể. Cuối cùng là bài học rút ra, gồm bài học kỹ thuật về việc cơ chế nào thực sự quan trọng, và bài học quy trình về tầm quan trọng của việc dựng môi trường sớm cũng như đọc trực tiếp công trình gốc thay vì tài liệu thứ cấp.
 
-- **PL A:** Mã nguồn các script tự viết
-- **PL B:** Hướng dẫn tái lập thử nghiệm trên Colab
-- **PL C:** Bảng phân công công việc chi tiết
-- **PL D:** Ảnh/video kết quả bổ sung
+### 5.2. Hạn chế của đồ án (khoảng 0,75 trang)
+
+Trình bày trung thực theo ba nhóm. Hạn chế phần cứng gồm việc không có GPU riêng và phụ thuộc vào Colab với giới hạn thời gian phiên cũng như loại GPU được cấp. Hạn chế cài đặt là việc dùng nerfacto thay cho bản triển khai gốc, nên không tái lập chính xác hoàn toàn kết quả công bố. Hạn chế phạm vi gồm số cảnh thử nghiệm ít, chưa thử hết các cấu hình, và chưa so sánh được với toàn bộ phương pháp đã khảo sát ở Chương 2.
+
+### 5.3. Hướng phát triển (khoảng 1,25 trang)
+
+#### 5.3.1. Hướng kỹ thuật
+
+Mỗi hướng viết một đoạn, nêu rõ nó giải quyết khuyết điểm nào ở công đoạn nào theo Bảng 2.7.
+
+Zip-NeRF công bố tại ICCV 2023 kết hợp scene contraction và IPE ở CĐ2 cùng CĐ3 với hash grid ở CĐ2, qua đó khắc phục đúng khuyết điểm về độ phức tạp tính toán mà đồ án gặp phải. 3D Gaussian Splatting công bố tại SIGGRAPH 2023 chuyển CĐ3 sang rasterization để đạt thời gian thực. Mip-Splatting công bố tại CVPR 2024 mang cơ chế chống răng cưa sang 3D Gaussian Splatting. Hướng NeRF không cần tư thế nhắm giải quyết khuyết điểm ở CĐ1 là sự phụ thuộc vào chất lượng Structure-from-Motion.
+
+#### 5.3.2. Hướng ứng dụng
+
+Gồm số hóa một không gian cụ thể, tích hợp vào ứng dụng web xem ba chiều, và tối ưu để chạy trên thiết bị di động.
 
 ---
 
-# BẢNG PHÂN CÔNG CÔNG VIỆC
+## TÀI LIỆU THAM KHẢO (khoảng 2 trang)
 
-> ⚠️ **`phuongphap.rtf` 2.9** — bảng phân công cho từng thành viên với mốc thời gian cụ thể.
+Gồm 16 tài liệu hiện có trong `03-Reference/`. Thống nhất dùng chuẩn IEEE, trích dẫn trong bài theo dạng số thứ tự trong ngoặc vuông.
 
-**Nguyên tắc:** hai hướng song song — *lý thuyết/báo cáo* và *cài đặt/thực nghiệm*. Chương 3 là trọng tâm nên cả hai cùng tham gia.
+## PHỤ LỤC
 
-| Tuần | Thành viên 1 (Bùi Văn Thiên) | Thành viên 2 | Mốc kiểm tra |
+| Mã | Nội dung |
+|---|---|
+| PL A | Mã nguồn các script tự viết |
+| PL B | Hướng dẫn tái lập thử nghiệm trên Colab |
+| PL C | Bảng phân công công việc chi tiết |
+| PL D | Ảnh và video kết quả bổ sung |
+
+---
+
+## BẢNG PHÂN CÔNG CÔNG VIỆC
+
+Đáp ứng yêu cầu tại `phuongphap.rtf` mục 2.9. Nguyên tắc chia việc là hai hướng song song, gồm hướng lý thuyết và viết báo cáo, và hướng cài đặt và thực nghiệm. Chương 3 là trọng tâm nên cả hai thành viên cùng tham gia.
+
+| Tuần | Bùi Văn Thiên (24120138) | Nguyễn Minh Khoa (24120073) | Mốc kiểm tra |
 |---|---|---|---|
-| 1 | Đọc 3 survey; viết mục 1.3 (framework + **ẩn số từng công đoạn**) | **Dựng môi trường Colab, chạy thử dataset mẫu** | ⚠️ Phải có ảnh render đầu tiên |
-| 2 | Viết Chương 2 mục 2.1-2.3 (theo khuôn 4 công đoạn) | Chạy thành công TN1 trên dataset chuẩn | Có kết quả TN1 |
-| 3 | Viết mục 2.4-2.5 (**bảng so sánh theo công đoạn** + bảng khuyết điểm tồn đọng) + Chương 1 | Đọc paper Mip-NeRF 2021, viết mục 3.2 | **Nộp thầy duyệt dàn ý + Chương 1-2** |
-| 4 | Viết Chương 3 mục 3.0-3.1 | Chụp dữ liệu thật, chạy COLMAP | Có dataset tự chụp đã xử lý |
-| 5 | Viết mục 3.1 (tiếp) | Train TN2 trên dataset tự chụp | Có kết quả TN2 |
-| 6 | Viết mục 3.3 | Chạy TN3 (so sánh baseline) | Xong nháp Chương 3 |
-| 7 | Viết mục 3.4 (**2 sơ đồ học/kiểm thử**) + 3.5 | Chạy TN4 (ablation), dựng video demo | Đủ dữ liệu cho Chương 4 |
-| 8 | Viết Chương 4 mục 4.1-4.3 | Tổng hợp bảng kết quả, chuẩn bị hình so sánh | Xong nửa đầu Chương 4 |
-| 9 | Viết mục 4.4 (**độ đo + quan hệ loss↔độ đo**), 4.5-4.7 | Hỗ trợ phân tích, viết mục 4.6.3 | **Xong Chương 4** |
-| 10 | Viết Chương 5, phần mở đầu, tài liệu tham khảo | Làm slide, chuẩn bị phụ lục | Bản báo cáo đầy đủ |
-| 11 | **Rà soát theo bảng kiểm 13 mục** trong `yeu-cau-cua-thay.md` | Hoàn thiện slide, tập thuyết trình | Bản hoàn chỉnh |
-| 12 | Dự phòng, sửa theo góp ý | Dự phòng, tập thuyết trình | **Nộp + bảo vệ** |
+| 1 | Đọc ba survey, viết mục 1.3 gồm framework và ẩn số từng công đoạn | Dựng môi trường Colab, chạy thử bộ dữ liệu mẫu | Phải có ảnh kết xuất đầu tiên |
+| 2 | Viết Chương 2 mục 2.1 đến 2.3 theo khuôn bốn công đoạn | Chạy thành công TN1 trên bộ dữ liệu chuẩn | Có kết quả TN1 |
+| 3 | Viết mục 2.4 và 2.5 gồm bảng so sánh theo công đoạn và bảng khuyết điểm tồn đọng, kèm Chương 1 | Đọc công trình Mip-NeRF 2021, viết mục 3.2 | Nộp giảng viên duyệt dàn ý và Chương 1, 2 |
+| 4 | Viết Chương 3 mục 3.0 và 3.1 | Chụp dữ liệu thật, chạy COLMAP | Có bộ dữ liệu tự chụp đã xử lý |
+| 5 | Viết tiếp mục 3.1 | Huấn luyện TN2 trên bộ dữ liệu tự chụp | Có kết quả TN2 |
+| 6 | Viết mục 3.3 | Chạy TN3 so sánh với phương pháp đối chứng | Xong bản nháp Chương 3 |
+| 7 | Viết mục 3.4 gồm hai sơ đồ học và kiểm thử, kèm mục 3.5 | Chạy TN4 nghiên cứu loại trừ, dựng video minh họa | Đủ dữ liệu cho Chương 4 |
+| 8 | Viết Chương 4 mục 4.1 đến 4.3 | Tổng hợp bảng kết quả, chuẩn bị hình ảnh so sánh | Xong nửa đầu Chương 4 |
+| 9 | Viết mục 4.4 gồm độ đo và quan hệ mất mát với độ đo, kèm mục 4.5 đến 4.7 | Hỗ trợ phân tích kết quả, viết mục 4.6.3 | Xong Chương 4 |
+| 10 | Viết Chương 5, phần mở đầu và tài liệu tham khảo | Làm slide, chuẩn bị phụ lục | Bản báo cáo đầy đủ |
+| 11 | Rà soát theo bảng kiểm 13 mục trong `yeu-cau-cua-thay.md` | Hoàn thiện slide, tập thuyết trình | Bản hoàn chỉnh |
+| 12 | Dự phòng, sửa theo góp ý | Dự phòng, tập thuyết trình | Nộp và bảo vệ |
 
-> ⚠️ **Rủi ro lớn nhất là môi trường cài đặt ở Chương 4** → xếp vào **tuần 1**. Nếu hết tuần 2 vẫn chưa train được dataset mẫu thì phải báo động và đổi phương án (thuê GPU cloud, mượn máy có GPU NVIDIA).
-
----
-
-# VIỆC CẦN LÀM NGAY
-
-| # | Việc | Vì sao ưu tiên |
-|---|---|---|
-| 1 | **Dựng môi trường Colab + train thử dataset mẫu** | Gỡ rủi ro lớn nhất; mọi thứ ở Chương 4 phụ thuộc vào đây |
-| 2 | **Gửi dàn ý này cho thầy duyệt** | Rẻ nhất để sửa hướng |
-| 3 | **Đọc 3 survey** → viết Chương 2 | Nguyên liệu sẵn, làm được ngay |
-| 4 | **Đọc paper Mip-NeRF 2021** | Lấp các chỗ `[MIP-NỀN]` chưa verify ở mục 3.2 |
+Rủi ro lớn nhất của đồ án là khâu dựng môi trường cài đặt ở Chương 4, do đó việc này được xếp vào tuần 1 thay vì tuần 8. Nếu hết tuần 2 vẫn chưa huấn luyện được bộ dữ liệu mẫu thì phải chuyển phương án ngay, chẳng hạn thuê GPU đám mây hoặc mượn máy có GPU NVIDIA.
 
 ---
 
-# ✅ BẢNG KIỂM ĐỐI CHIẾU 8 LƯU Ý CỦA THẦY
+## VIỆC CẦN LÀM NGAY
 
-| Lưu ý | Yêu cầu | Dàn ý đáp ứng ở đâu |
+| Thứ tự | Việc | Lý do ưu tiên |
 |---|---|---|
-| **1** | Framework tổng quát, không nhắc phương pháp cụ thể | Mục 1.3.2 — bảng 4 công đoạn chỉ nêu "các hướng giải pháp khả dĩ" |
-| **2** | Xác định ẩn số từng công đoạn | Mục 1.3.3 — **Bảng 1.1** (đã cho / ẩn số / ràng buộc) |
-| **3** | So sánh theo cùng cột tiêu chí ứng với công đoạn | Mục 2.3 (khuôn 5 mục chung) + mục 2.4 **Bảng 2.1** (cột = công đoạn) |
-| **4** | Ground truth, cách đánh nhãn, loss function | Mục 3.4.1 — **Bảng 3.5**, nhấn mạnh tính **tự giám sát** |
-| **5** | Tiến trình giai đoạn học và kiểm thử | Mục 3.4.1 + 3.4.2 — **2 sơ đồ riêng** (Hình 3.7, 3.8) |
-| **6** | Độ chính xác + độ phức tạp tính toán + quan hệ loss↔độ đo | Mục 4.4 — 3 mục con, đặc biệt **4.4.3** phân tích "học một đằng đánh giá một nẻo" |
-| **7** | Dataset: đánh nhãn, số mẫu, đa dạng, **thách thức** | Mục 1.3.5 **Bảng 1.2** + mục 4.3 **Bảng 4.2** |
-| **8** | Khuyết điểm tồn đọng theo công đoạn | Mục 2.2.2 (hạn chế NeRF theo công đoạn) + mục 2.5 **Bảng 2.3** |
+| 1 | Dựng môi trường Colab và huấn luyện thử bộ dữ liệu mẫu | Gỡ rủi ro lớn nhất, vì toàn bộ Chương 4 phụ thuộc vào khâu này |
+| 2 | Gửi dàn ý cho giảng viên duyệt | Chi phí sửa hướng ở giai đoạn này là thấp nhất |
+| 3 | Đọc ba survey để viết Chương 2 | Nguyên liệu đã sẵn, thực hiện được ngay, không phụ thuộc khâu khác |
+| 4 | Đọc công trình Mip-NeRF 2021 | Bổ sung các nội dung chưa xác minh được tại mục 3.2 |
+
+---
+
+## BẢNG KIỂM ĐỐI CHIẾU TÁM LƯU Ý CỦA GIẢNG VIÊN
+
+| Lưu ý | Yêu cầu | Vị trí đáp ứng trong dàn ý |
+|---|---|---|
+| 1 | Framework tổng quát, không nhắc phương pháp cụ thể | Mục 1.3.2, Bảng 1.1 chỉ nêu các hướng giải pháp khả dĩ |
+| 2 | Xác định ẩn số từng công đoạn | Mục 1.3.3, Bảng 1.2 gồm dữ kiện đã cho, ẩn số, ràng buộc |
+| 3 | So sánh theo cùng cột tiêu chí ứng với công đoạn | Mục 2.3 dùng khuôn năm mục chung, mục 2.4 Bảng 2.5 có cột là công đoạn |
+| 4 | Dữ liệu xác thực, cách đánh nhãn, hàm mất mát | Mục 3.4.1, Bảng 3.7, nhấn mạnh tính tự giám sát |
+| 5 | Tiến trình giai đoạn học và giai đoạn kiểm thử | Mục 3.4.1 và 3.4.2, hai sơ đồ riêng là Hình 3.7 và Hình 3.8 |
+| 6 | Độ chính xác, độ phức tạp tính toán, quan hệ mất mát với độ đo | Mục 4.4 gồm ba mục con, trong đó 4.4.3 phân tích hiện tượng học một đằng đánh giá một nẻo |
+| 7 | Tập dữ liệu: đánh nhãn, số mẫu, đa dạng, thách thức | Mục 1.3.5 Bảng 1.3 và mục 4.3 Bảng 4.3 |
+| 8 | Khuyết điểm tồn đọng theo công đoạn | Mục 2.2.2 Bảng 2.3 và mục 2.5 Bảng 2.7 |
