@@ -9,17 +9,17 @@
 
 ### KHOA [TÊN KHOA]
 
-<br>
+
 
 # ĐỒ ÁN MÔN HỌC ĐỒ HỌA MÁY TÍNH
 
-<br>
+
 
 # XÂY DỰNG ỨNG DỤNG KẾT XUẤT ẢNH VỚI GÓC NHÌN TÙY Ý DỰA VÀO DÃY ẢNH 2D CHO TRƯỚC
 
 ## Tìm hiểu mô hình NeRF và NeRF cải tiến
 
-<br>
+
 
 **Giảng viên hướng dẫn:** PGS.TS Lý Quốc Ngọc
 
@@ -32,7 +32,7 @@
 | Bùi Văn Thiên | 24120138 |
 | Nguyễn Minh Khoa | 24120073 |
 
-<br>
+
 
 **Thành phố Hồ Chí Minh, năm 2026**
 
