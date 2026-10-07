@@ -31,7 +31,7 @@ Toàn bộ báo cáo xoay quanh bốn công đoạn được định nghĩa tạ
       tham số camera         cảnh 3D              ảnh                biểu diễn
 ```
 
-Bốn công đoạn này giữ vai trò khác nhau ở từng chương:
+Mỗi chương dùng bốn công đoạn này theo một cách khác nhau:
 
 | Chương | Vai trò của bốn công đoạn |
 |---|---|
@@ -536,8 +536,6 @@ Bước này ứng với CĐ1. Quy trình gồm trích đặc trưng, khớp đ�
 
 ### 4.4. Độ đo đánh giá (khoảng 1,5 trang)
 
-Giảng viên nhấn mạnh mục này tại Lưu ý 6.
-
 #### 4.4.1. Nhóm độ đo độ chính xác
 
 **Bảng 4.4. Ba độ đo chất lượng ảnh**
@@ -560,7 +558,7 @@ Giảng viên nhấn mạnh mục này tại Lưu ý 6.
 | Số tham số mô hình | Dung lượng lưu trữ |
 | Bộ nhớ GPU tiêu thụ khi huấn luyện | Ràng buộc khi triển khai thực tế |
 
-Trong năm độ đo trên, số lần truy vấn mạng mỗi tia đáng được nhấn mạnh vì nó không phụ thuộc phần cứng, qua đó khắc phục được vấn đề mỗi công trình đo trên một cấu hình khác nhau.
+Trong năm độ đo trên, số lần truy vấn mạng mỗi tia không phụ thuộc phần cứng, nên so sánh được giữa các công trình đo trên cấu hình khác nhau.
 
 #### 4.4.3. Quan hệ giữa hàm mất mát và độ đo đánh giá
 
