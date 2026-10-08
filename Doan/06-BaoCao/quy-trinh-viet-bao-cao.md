@@ -8,9 +8,20 @@ File `bao-cao.md` là bản gốc duy nhất. File `bao-cao.docx` chỉ dùng đ
 
 Lý do chọn markdown làm bản gốc thay vì viết thẳng vào Word: cuối kỳ cần chuyển báo cáo sang LaTeX. Đường `markdown sang LaTeX` giữ gần như trọn vẹn tiêu đề, bảng, công thức và trích dẫn, trong khi `docx sang LaTeX` thường ra mã rối và bảng vỡ. Ngoài ra git so sánh được hai phiên bản `.md` nên theo dõi được lịch sử sửa đổi, còn `.docx` thì không.
 
-## Bốn bước bắt buộc
+## Luật duyệt trước khi ghi
 
-Mỗi lần viết hoặc sửa bất kỳ phần nào của báo cáo, chạy đủ bốn bước theo thứ tự.
+Trước khi ghi bất kỳ đoạn nội dung mới nào vào `bao-cao.md`, phải in toàn bộ
+đoạn đó ra ngay trong khung trả lời, dạng chữ đọc được bình thường, không giấu
+trong lệnh Bash hay file tạm. Chỉ ghi vào `.md` sau khi người dùng xác nhận
+duyệt. Nếu người dùng yêu cầu sửa thì sửa bản nháp và in lại, lặp lại tới khi
+được duyệt rồi mới ghi.
+
+Lý do: những lần trước, nội dung từng được ghi thẳng vào file qua lệnh Bash,
+người dùng không có bản để đọc trước khi nó đã nằm trong báo cáo.
+
+## Năm bước bắt buộc
+
+Mỗi lần viết hoặc sửa bất kỳ phần nào của báo cáo, chạy đủ năm bước theo thứ tự.
 
 ### Bước 1. Soạn nội dung
 
@@ -23,7 +34,12 @@ Dùng skill `research-paper-writing-skill`. Skill này yêu cầu:
 - Mọi khẳng định phải có bằng chứng hỗ trợ. Nếu chưa có kết quả thì làm nhẹ hoặc bỏ khẳng định đó
 - Sau khi viết xong mỗi mục, đọc ngược dàn ý: liệt kê câu chủ đề từng đoạn rồi kiểm tra chúng có ánh xạ đúng về luận điểm chính của mục không
 
-### Bước 2. Rà văn phong
+### Bước 2. In bản nháp ra chat, chờ duyệt
+
+Dán nguyên văn đoạn vừa soạn vào khung trả lời. Dừng lại chờ người dùng đọc và
+xác nhận trước khi sang bước tiếp theo.
+
+### Bước 3. Rà văn phong
 
 Dùng skill `humanizer`. Skill dò 26 mẫu đặc trưng của văn do máy sinh, lấy từ hướng dẫn "Signs of AI writing" của Wikipedia. Các mẫu hay gặp nhất trong báo cáo tiếng Việt:
 
@@ -36,7 +52,7 @@ Dùng skill `humanizer`. Skill dò 26 mẫu đặc trưng của văn do máy sin
 | Ngôn ngữ thổi phồng | cốt lõi, then chốt, quan trọng nhất, có giá trị cao | Nêu thẳng lý do thay vì báo hiệu tầm quan trọng |
 | Nhãn in đậm trang trí | Mọi mục trong danh sách đều có nhãn in đậm kèm hai chấm | Chuyển thành văn xuôi khi nhãn không mang thông tin riêng |
 
-### Bước 3. Xuất file Word
+### Bước 4. Xuất file Word
 
 ```bash
 cd Doan/06-BaoCao
@@ -45,7 +61,7 @@ NODE_PATH=$(npm root -g) node md2docx.js bao-cao.md bao-cao.docx
 
 Bộ chuyển đổi xử lý được: tiêu đề bốn cấp, bảng, danh sách lồng hai cấp, liên kết, ảnh nhúng, khối mã, khối trích dẫn, in đậm và in nghiêng lồng nhau. Nó cảnh báo khi gặp thẻ HTML chưa xử lý hoặc không tìm thấy file ảnh.
 
-### Bước 4. Kiểm tra không mất nội dung
+### Bước 5. Kiểm tra không mất nội dung
 
 ```bash
 python3 kiem-tra-chuyen-doi.py bao-cao.md bao-cao.docx
@@ -53,13 +69,41 @@ python3 kiem-tra-chuyen-doi.py bao-cao.md bao-cao.docx
 
 Script đối chiếu từng dòng nội dung giữa hai file, đếm số bảng và số hình, dò thẻ HTML bị in thành chữ, và dò dấu hiệu văn AI còn sót. Phải ra dòng "Đạt. Không phát hiện mất mát nội dung." thì mới coi là xong bước xuất file.
 
-## Ba quy tắc về định dạng
+## Quy định trình bày của Khoa
 
-**Không dùng thẻ HTML trong file markdown**, kể cả `<br>`. Dùng dòng trống để ngắt đoạn. Thẻ HTML từng bị in thành chữ trong file Word, và cũng gây rối khi chuyển sang LaTeX.
+Toàn bộ quy định rút từ `CLC_Mau-quy-dinh-trinh-bay-KLTN.pdf` (bản chính thức của
+Khoa) và `Thesis_Template.pdf` nằm ở `quy-dinh-trinh-bay.md`. Đọc file đó trước
+khi viết bất kỳ chương nào. Tám điều hay quên nhất:
 
-**Không dùng gạch ngang dài** (`—` hoặc `–`). Đây vừa là quy tắc của bước rà văn phong, vừa tránh lỗi mã hóa khi chuyển định dạng.
+| Điều | Nội dung |
+|---|---|
+| Độ dài | Phần nội dung tối thiểu 50 trang, không quá 100 trang |
+| Đầu đề | Đầu đề bảng đặt phía trên bảng, đầu đề hình đặt phía dưới hình |
+| Nhắc tới hình và bảng | Phải nêu số hiệu: "xem Hình 3.2". Không viết "hình dưới đây" |
+| Phương trình | Mọi phương trình phải đánh số trong ngoặc đơn, đặt sát lề phải |
+| Ký hiệu | Giải thích ngay lần xuất hiện đầu tiên, kèm đơn vị tính |
+| Trích dẫn | Bỏ phần trong ngoặc vuông đi thì câu vẫn đủ nghĩa. Viết "Nghiên cứu của Barron và cộng sự [3] cho thấy", không viết "Nghiên cứu [3] cho thấy" |
+| Viết tắt | Không lạm dụng. Chỉ giữ từ xuất hiện nhiều lần, viết đầy đủ ở lần đầu kèm chữ viết tắt trong ngoặc |
+| Đề cương chi tiết | Bắt buộc có, đặt ngay sau lời cảm ơn, phải có chữ ký giảng viên hướng dẫn và bảng phân công từng thành viên |
 
-**Đặt tên hình và bảng theo chương.** Hình 3.1, Bảng 2.1. Đánh số liên tục trong từng chương để lập danh mục ở phần mở đầu.
+Script `md2docx.js` đã cấu hình sẵn khổ A4, lề trên 3cm, lề dưới 3,5cm, lề trái
+3,5cm, lề phải 2cm, Times New Roman 13pt, giãn dòng 1,5 và số trang đặt giữa phía
+dưới. Không cần chỉnh tay trong Word.
+
+Hai việc script chưa làm được, để lại cho khâu chuyển sang LaTeX:
+
+1. Đánh số trang La Mã thường cho phần đầu rồi đổi sang số Ả-rập từ phần nội dung
+2. Đánh số phương trình tự động ở lề phải
+
+## Hai quy tắc về nguồn
+
+**Không dùng thẻ HTML trong file markdown**, kể cả `<br>`. Dùng dòng trống để
+ngắt đoạn. Thẻ HTML từng bị in thành chữ trong file Word, và cũng gây rối khi
+chuyển sang LaTeX. Riêng chú thích `<!-- -->` thì được, vì bộ chuyển đổi bỏ hẳn
+chúng trước khi xuất.
+
+**Không dùng gạch ngang dài** (`—` hoặc `–`). Đây vừa là quy tắc của bước rà văn
+phong, vừa tránh lỗi mã hóa khi chuyển định dạng.
 
 ## Công cụ cần cài
 
@@ -73,6 +117,9 @@ Script đối chiếu từng dòng nội dung giữa hai file, đếm số bản
 
 | File | Nội dung |
 |---|---|
+| `quy-dinh-trinh-bay.md` | Quy định trình bày đầy đủ, rút từ hai file PDF bên dưới |
+| `CLC_Mau-quy-dinh-trinh-bay-KLTN.pdf` | Bản quy định chính thức của Khoa Công nghệ Thông tin |
+| `Thesis_Template.pdf` | Template LaTeX kèm hướng dẫn, bổ sung chi tiết bản quy định không nói |
 | `dan-y-bao-cao.md` | Dàn ý chi tiết năm chương, kèm bảng kiểm đối chiếu tám lưu ý của giảng viên |
 | `../01-DeBai/yeu-cau-cua-thay.md` | Toàn bộ yêu cầu của giảng viên, kèm bảng kiểm 13 mục trước khi nộp |
 | `bao-cao.md` | Bản gốc của báo cáo |

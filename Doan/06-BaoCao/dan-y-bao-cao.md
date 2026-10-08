@@ -4,15 +4,19 @@
 
 **Nhóm thực hiện:**
 
-| Thành viên | MSSV |
-|---|---|
-| Bùi Văn Thiên | 24120138 |
-| Nguyễn Minh Khoa | 24120073 |
+| Thành viên | MSSV | Vai trò |
+|---|---|---|
+| Bùi Văn Thiên | 24120138 | Trưởng nhóm |
+| Nguyễn Minh Khoa | 24120073 | Thành viên |
 
 **Lớp:** Đồ Họa Máy Tính CQ2024/23
 **Giảng viên hướng dẫn:** PGS.TS Lý Quốc Ngọc
 **Phương pháp chọn trình bày:** Mip-NeRF 360 (Barron và cộng sự, CVPR 2022)
-**Độ dài dự kiến:** 40-48 trang
+**Độ dài dự kiến:** 51 trang phần nội dung, cộng phần đầu và tài liệu tham khảo.
+Quy định của Khoa (`06-BaoCao/quy-dinh-trinh-bay.md`, mục 2) buộc phần nội dung
+tối thiểu 50 trang và không quá 100 trang, không tính trang bìa, lời cảm ơn,
+mục lục và tài liệu tham khảo. Tổng ước lượng theo chương bên dưới là
+4 + 7 + 11 + 15 + 11 + 3 = 51 trang, vừa đủ ngưỡng nên không được cắt bớt.
 
 Dàn ý này được xây dựng bám sát `01-DeBai/yeu-cau-cua-thay.md`, đặc biệt là tám lỗi thường gặp nêu trong `motsoluuyloi.rtf`. Mỗi vị trí có liên quan đều ghi chú "Lưu ý n" để tiện đối chiếu.
 
@@ -74,14 +78,19 @@ Giữ thống nhất các thuật ngữ sau trong toàn báo cáo:
 
 | Thành phần | Nội dung |
 |---|---|
-| Trang bìa | Trường, khoa, tên đồ án, môn học, nhóm, giảng viên hướng dẫn, năm |
+| Bìa chính | Trường, khoa, tên sinh viên, tên đồ án, loại báo cáo, năm |
+| Trang phụ bìa | Như bìa chính, thêm mã số sinh viên và giảng viên hướng dẫn |
 | Lời cảm ơn | Khoảng nửa trang |
+| Đề cương chi tiết | Tên đề tài, GVHD, phân công từng thành viên theo mốc thời gian, có chữ ký GVHD |
 | Mục lục | Tự động sinh, tới mục cấp ba |
 | Danh mục hình, danh mục bảng | Đánh số theo chương, ví dụ Hình 3.1, Bảng 2.1 |
 | Danh mục từ viết tắt | NeRF, MLP, SfM, COLMAP, PSNR, SSIM, LPIPS, IPE, PE, NDC, SH, 3DGS, GPU, TPU, CUDA, SDF, FPS |
 | Danh mục ký hiệu | x (vị trí 3D), d (hướng nhìn), o (gốc tia), t (tham số tia), sigma (density), c (màu), T (transmittance), alpha (opacity), gamma (positional encoding), mu và Sigma (mean và covariance), Theta (trọng số mạng), K, R, C (nội tại, xoay, tâm camera) |
+| Tóm tắt | Khoảng 200 từ, bốn câu theo trình tự: bối cảnh, khoảng trống nghiên cứu, việc đã thực hiện, kết quả cụ thể đạt được |
 
-**Tóm tắt** viết sau cùng, khoảng 200 từ, gồm bốn câu theo trình tự: bối cảnh, khoảng trống nghiên cứu, việc đã thực hiện, kết quả cụ thể đạt được.
+Thứ tự tám dòng trên theo đúng `quy-dinh-trinh-bay.md` mục 4: tóm tắt đặt sau các
+bảng danh mục, không đặt trước. Phần đề cương chi tiết viết trước khi bắt tay vào
+Chương 1, vì cột phân công buộc phải chốt việc của từng người ngay từ đầu.
 
 ---
 
@@ -185,9 +194,9 @@ Cụ thể hóa bốn công đoạn thành danh sách tác vụ thực thi đư�
 
 | Bộ dữ liệu | Số cảnh | Loại | Thách thức chứa trong dữ liệu |
 |---|---|---|---|
-| Blender Synthetic | 8 vật thể | Tổng hợp, 360 độ | Vật liệu phản chiếu không tuân theo mô hình Lambert, hình học phức tạp như dây chằng tàu thủy và bánh răng |
-| LLFF | 8 cảnh | Thật, hướng về phía trước | Nhiễu ảnh thật, nội dung trải từ gần tới vô cực, vùng bị che khuất một phần |
-| Mip-NeRF 360 | 9 cảnh, gồm 5 ngoài trời và 4 trong nhà | Thật, 360 độ không giới hạn | Cảnh không giới hạn với nền trải tới chân trời, chi tiết ở nhiều tỉ lệ khác nhau, ánh sáng ngoài trời thay đổi, vùng có ít ảnh quan sát |
+| Realistic Synthetic 360°, còn gọi là Blender dataset (Mildenhall và cộng sự, 2020) | 8 vật thể | Tổng hợp, 360 độ | Vật liệu phản chiếu không tuân theo mô hình Lambert, hình học phức tạp như dây chằng tàu thủy ở cảnh Ship và bánh răng ở cảnh Lego |
+| Real Forward-Facing (Mildenhall và cộng sự, 2020, trong đó 5 trên 8 cảnh kế thừa từ Mildenhall và cộng sự, 2019) | 8 cảnh | Thật, hướng về phía trước | Nhiễu ảnh thật, nội dung trải từ gần tới xa, vùng bị che khuất một phần |
+| Mip-NeRF 360 (Barron và cộng sự, 2022) | 9 cảnh, gồm 5 ngoài trời và 4 trong nhà | Thật, 360 độ không giới hạn | Nội dung tồn tại ở khoảng cách bất kỳ, chênh lệch tỉ lệ lớn giữa vật thể gần và nền xa, một số vùng chỉ được quan sát bởi rất ít ảnh |
 
 ### 1.4. Đóng góp của báo cáo `[Một phần]` (khoảng 0,75 trang)
 
@@ -675,7 +684,7 @@ Gồm 16 tài liệu hiện có trong `03-Reference/`. Thống nhất dùng chu�
 
 Đáp ứng yêu cầu tại `phuongphap.rtf` mục 2.9. Nguyên tắc chia việc là hai hướng song song, gồm hướng lý thuyết và viết báo cáo, và hướng cài đặt và thực nghiệm. Chương 3 là trọng tâm nên cả hai thành viên cùng tham gia.
 
-| Tuần | Bùi Văn Thiên (24120138) | Nguyễn Minh Khoa (24120073) | Mốc kiểm tra |
+| Tuần | Bùi Văn Thiên - 24120138 (trưởng nhóm) | Nguyễn Minh Khoa - 24120073 | Mốc kiểm tra |
 |---|---|---|---|
 | 1 | Đọc ba survey, viết mục 1.3 gồm framework và ẩn số từng công đoạn | Dựng môi trường Colab, chạy thử bộ dữ liệu mẫu | Phải có ảnh kết xuất đầu tiên |
 | 2 | Viết Chương 2 mục 2.1 đến 2.3 theo khuôn bốn công đoạn | Chạy thành công TN1 trên bộ dữ liệu chuẩn | Có kết quả TN1 |

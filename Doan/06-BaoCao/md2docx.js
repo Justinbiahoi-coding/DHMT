@@ -3,7 +3,7 @@ const path = require("path");
 const {
   Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell,
   WidthType, BorderStyle, ShadingType, AlignmentType, LevelFormat,
-  ExternalHyperlink, ImageRun, PageBreak
+  ExternalHyperlink, ImageRun, PageBreak, Footer, PageNumber
 } = require("docx");
 
 const mdPath = process.argv[2];
@@ -98,7 +98,8 @@ const numbering = { config: [
 
 const border = { style: BorderStyle.SINGLE, size: 2, color: "AAAAAA" };
 const borders = { top: border, bottom: border, left: border, right: border };
-const CONTENT_W = 9026;
+// Khổ A4 11906 twip trừ lề trái 1984 (3,5cm) và lề phải 1134 (2cm)
+const CONTENT_W = 8788;
 
 const isRow = l => /^\s*\|.*\|\s*$/.test(l);
 const isSep = l => /^\s*\|?[\s:\-|]+\|?\s*$/.test(l) && l.includes("-");
@@ -202,25 +203,32 @@ const F = "Times New Roman";
 const doc = new Document({
   numbering,
   styles: {
-    default: { document: { run: { font: F, size: 24 } } },
+    // 26 nửa-điểm = 13pt, line 360 = giãn dòng 1,5 theo quy định của Khoa
+    default: { document: { run: { font: F, size: 26 },
+      paragraph: { spacing: { line: 360 } } } },
     paragraphStyles: [
       { id: "Heading1", name: "Heading 1", basedOn: "Normal", next: "Normal", quickFormat: true,
-        run: { size: 32, bold: true, font: F, color: "1F4E79" },
+        run: { size: 32, bold: true, font: F },
         paragraph: { spacing: { before: 320, after: 200 }, outlineLevel: 0 } },
       { id: "Heading2", name: "Heading 2", basedOn: "Normal", next: "Normal", quickFormat: true,
-        run: { size: 28, bold: true, font: F, color: "2E75B6" },
+        run: { size: 28, bold: true, font: F },
         paragraph: { spacing: { before: 260, after: 140 }, outlineLevel: 1 } },
       { id: "Heading3", name: "Heading 3", basedOn: "Normal", next: "Normal", quickFormat: true,
-        run: { size: 25, bold: true, font: F },
+        run: { size: 26, bold: true, font: F },
         paragraph: { spacing: { before: 200, after: 110 }, outlineLevel: 2 } },
       { id: "Heading4", name: "Heading 4", basedOn: "Normal", next: "Normal", quickFormat: true,
-        run: { size: 24, bold: true, italics: true, font: F },
+        run: { size: 26, bold: true, italics: true, font: F },
         paragraph: { spacing: { before: 160, after: 90 }, outlineLevel: 3 } },
     ]
   },
   sections: [{
+    // Lề: trên 3cm, dưới 3,5cm, trái 3,5cm, phải 2cm (1cm = 567 twip)
     properties: { page: { size: { width: 11906, height: 16838 },
-      margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 } } },
+      margin: { top: 1701, right: 1134, bottom: 1984, left: 1984 } } },
+    footers: { default: new Footer({ children: [new Paragraph({
+      alignment: AlignmentType.CENTER, spacing: { line: 240 },
+      children: [new TextRun({ children: [PageNumber.CURRENT], font: F, size: 26 })]
+    })] }) },
     children
   }]
 });

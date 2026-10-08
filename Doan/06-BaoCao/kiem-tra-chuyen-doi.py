@@ -72,7 +72,11 @@ def main(md_path, docx_path):
         loi.extend("    " + x for x in thieu[:10])
 
     # 3. Thẻ HTML hoặc chú thích bị in thành chữ
-    for mau in ["<br", "<!--", "-->", "</"]:
+    # Không dò "-->" riêng lẻ: sơ đồ ASCII hợp lệ có thể chứa mũi tên "--->",
+    # chuỗi này mang "-->" như chuỗi con nên gây báo động giả. Một chú thích
+    # <!-- --> bị rò rỉ luôn kéo theo dấu mở "<!--" lộ ra cùng, nên chỉ cần dò
+    # dấu mở là đủ phát hiện rò rỉ thật.
+    for mau in ["<br", "<!--", "</"]:
         if mau in text:
             loi.append(f"Thẻ {mau!r} bị in thành chữ trong .docx ({text.count(mau)} lần)")
 
