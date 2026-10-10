@@ -10,6 +10,12 @@ Lý do chọn markdown làm bản gốc thay vì viết thẳng vào Word: cuố
 
 ## Luật duyệt trước khi ghi
 
+**Bắt buộc gọi công cụ Skill cho `research-paper-writing-skill` ở Bước 1 và cho
+`humanizer` ở Bước 3, mỗi lần soạn nội dung mới.** Không được chỉ nhớ lại
+nguyên tắc của hai skill này mà bỏ qua việc gọi thật. Từng có lần bỏ qua, chỉ
+bị phát hiện khi người dùng hỏi lại, nên đây không phải gợi ý mà là điều kiện
+bắt buộc trước khi ghi file.
+
 Trước khi ghi bất kỳ đoạn nội dung mới nào vào `bao-cao.md`, phải in toàn bộ
 đoạn đó ra ngay trong khung trả lời, dạng chữ đọc được bình thường, không giấu
 trong lệnh Bash hay file tạm. Chỉ ghi vào `.md` sau khi người dùng xác nhận
