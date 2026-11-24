@@ -1,0 +1,20 @@
+{
+  "id": "nminhkhoa24120073/instant-ngp-dhmt",
+  "id_no": 146136134,
+  "title": "instant-ngp-DHMT",
+  "code_file": "instant-ngp-dhmt.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": true,
+  "keywords": [],
+  "dataset_sources": [
+    "nminhkhoa24120073/mipnerf360-garden-images8"
+  ],
+  "kernel_sources": [],
+  "competition_sources": [],
+  "model_sources": [],
+  "machine_shape": "NvidiaTeslaT4"
+}
